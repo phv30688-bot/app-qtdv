@@ -478,19 +478,43 @@
     runMatch().then(function(){ goTo('results', {replace:true}); });
   });
 
-  function runMatch(){
+  function sleep(ms){ return new Promise(function(resolve){ setTimeout(resolve, ms); }); }
+
+  // Server tren goi mien phi co the "ngu" sau thoi gian khong ai dung, lan goi dau
+  // sau do co the bi rot ket noi trong luc server dang khoi dong lai (thuong duoi 60s).
+  // Thu lai vai lan thay vi bao loi ngay.
+  var RETRY_DELAYS_MS = [4000, 8000, 15000];
+
+  function fetchMatchWithRetry(payload, attempt){
+    attempt = attempt || 0;
     return fetch('/match', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        occasion: state.occasion,
-        budgetTier: state.budgetTier,
-        relationship: state.relationship,
-        style: state.style,
-        excludedIds: state.excluded
-      })
+      body: JSON.stringify(payload)
     })
-      .then(function(r){ return r.json(); })
+      .then(function(r){
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .catch(function(err){
+        if (attempt >= RETRY_DELAYS_MS.length) throw err;
+        var loadingText = $('.loading-text');
+        if (loadingText) loadingText.textContent = 'Server đang khởi động lại, vui lòng đợi thêm giây lát…';
+        return sleep(RETRY_DELAYS_MS[attempt]).then(function(){
+          return fetchMatchWithRetry(payload, attempt + 1);
+        });
+      });
+  }
+
+  function runMatch(){
+    var payload = {
+      occasion: state.occasion,
+      budgetTier: state.budgetTier,
+      relationship: state.relationship,
+      style: state.style,
+      excludedIds: state.excluded
+    };
+    return fetchMatchWithRetry(payload)
       .then(function(data){
         lastItems = data.items || [];
         lastItems.forEach(function(p){ state.excluded.push(p.id); });
@@ -500,7 +524,15 @@
         console.error(err);
         renderResults([], { exhausted: true });
         var note = $('#resultsNoteSlot');
-        note.innerHTML = '<div class="results-note sans">Không kết nối được tới server — kiểm tra lại "node server.js" có đang chạy không.</div>';
+        note.innerHTML =
+          '<div class="results-note sans">Không kết nối được tới server sau nhiều lần thử. Kiểm tra mạng rồi bấm nút bên dưới để thử lại.</div>';
+        var retryBtn = document.createElement('button');
+        retryBtn.className = 'btn btn-primary';
+        retryBtn.style.width = '100%';
+        retryBtn.style.marginBottom = '14px';
+        retryBtn.textContent = 'Thử lại';
+        retryBtn.addEventListener('click', function(){ runMatch(); });
+        note.appendChild(retryBtn);
       });
   }
 
