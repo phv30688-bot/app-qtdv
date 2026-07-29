@@ -1,0 +1,6 @@
+node_modules/
+.env
+
+# Du lieu san pham (products.enriched.json...) CAN duoc commit vi server doc luc chay,
+# nhung leads.json chua thong tin khach hang that nen khong bao gio dua len git.
+data/leads.json

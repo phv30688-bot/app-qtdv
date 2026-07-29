@@ -1,0 +1,24 @@
+{
+  "name": "qua-tang-app",
+  "version": "1.0.0",
+  "description": "Backend cho app tu van qua tang dat vang - dong bo du lieu san pham tu Haravan",
+  "main": "index.js",
+  "scripts": {
+    "test:haravan": "node --env-file=.env scripts/test-haravan-connection.js",
+    "sync:catalogue": "node --env-file=.env scripts/sync-catalogue.js",
+    "apply:taxonomy": "node scripts/apply-taxonomy.js",
+    "analyze:images": "node scripts/analyze-image-bounds.js",
+    "start": "node --env-file=.env server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^5.2.1",
+    "jimp": "^1.6.1"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.0"
+  }
+}

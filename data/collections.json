@@ -1,0 +1,842 @@
+[
+  {
+    "id": 1004091685,
+    "title": "Quà tặng doanh nghiệp giá rẻ",
+    "handle": "qua-tang-theo-doi-tuong",
+    "type": "custom"
+  },
+  {
+    "id": 1003666582,
+    "title": "Quà tặng Khách hàng VIP",
+    "handle": "qua-tang-khach-hang-vip",
+    "type": "custom"
+  },
+  {
+    "id": 1003618444,
+    "title": "Quà tân gia",
+    "handle": "qua-tan-gia",
+    "type": "custom"
+  },
+  {
+    "id": 1003618438,
+    "title": "Quà tặng doanh nghiệp",
+    "handle": "qua-tang-doanh-nghiep",
+    "type": "custom"
+  },
+  {
+    "id": 1003618461,
+    "title": "Quà tặng đối tác",
+    "handle": "qua-tang-doi-tac",
+    "type": "custom"
+  },
+  {
+    "id": 1003618462,
+    "title": "Quà tặng sếp",
+    "handle": "qua-tang-sep",
+    "type": "custom"
+  },
+  {
+    "id": 1003621470,
+    "title": "Tranh dát vàng",
+    "handle": "tranh-dat-vang-1",
+    "type": "custom"
+  },
+  {
+    "id": 1003621469,
+    "title": "Tượng dát vàng",
+    "handle": "tuong-dat-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003666583,
+    "title": "Tranh dát vàng",
+    "handle": "tranh-dat-vang-2",
+    "type": "custom"
+  },
+  {
+    "id": 1003621229,
+    "title": "Danh thắng Việt Nam",
+    "handle": "danh-lam-thang-canh",
+    "type": "custom"
+  },
+  {
+    "id": 1003618424,
+    "title": "Chậu cây dát vàng",
+    "handle": "chau-cay-dat-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003618418,
+    "title": "Tranh thuyền",
+    "handle": "tranh-thuyen",
+    "type": "custom"
+  },
+  {
+    "id": 1003618422,
+    "title": "Mô hình thuyền buồm",
+    "handle": "mo-hinh-thuyen-buom",
+    "type": "custom"
+  },
+  {
+    "id": 1003752009,
+    "title": "Tranh thư pháp dát vàng 24k",
+    "handle": "tranh-thu-phap",
+    "type": "custom"
+  },
+  {
+    "id": 1004115067,
+    "title": "Chữ Thọ thư pháp",
+    "handle": "chu-tho-thu-phap",
+    "type": "custom"
+  },
+  {
+    "id": 1004045796,
+    "title": "Khuyến mãi",
+    "handle": "khuyen-mai",
+    "type": "custom"
+  },
+  {
+    "id": 1004052511,
+    "title": "Thiết kế cá nhân hóa",
+    "handle": "thiet-ke-ca-nhan-hoa",
+    "type": "custom"
+  },
+  {
+    "id": 1004052456,
+    "title": "Quà tặng DN giá rẻ",
+    "handle": "qua-tang-doanh-nghiep-gia-re",
+    "type": "custom"
+  },
+  {
+    "id": 1003621186,
+    "title": "Mô hình thuyền dát vàng",
+    "handle": "mo-hinh-thuyen-dat-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003621185,
+    "title": "Mô hình thuyền mạ vàng",
+    "handle": "mo-hinh-thuyen-ma-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003621187,
+    "title": "Tranh thuyền dát vàng",
+    "handle": "tranh-thuyen-dat-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003621188,
+    "title": "Tranh thuyền mạ vàng",
+    "handle": "tranh-thuyen-ma-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003621251,
+    "title": "Mã đáo thành công",
+    "handle": "ma-dao-thanh-cong",
+    "type": "custom"
+  },
+  {
+    "id": 1003827797,
+    "title": "Cá chép hoa sen dát vàng",
+    "handle": "ca-chep-hoa-sen-dat-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1004004974,
+    "title": "Quà tặng rồng vàng",
+    "handle": "qua-tang-rong-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003925124,
+    "title": "Tranh thư pháp mừng thọ",
+    "handle": "tranh-thu-phap-mung-tho",
+    "type": "custom"
+  },
+  {
+    "id": 1003925119,
+    "title": "Tùng hạc diên niên",
+    "handle": "tung-hac-dien-nien",
+    "type": "custom"
+  },
+  {
+    "id": 1003618434,
+    "title": "Quà tặng phật giáo",
+    "handle": "qua-tang-phat-giao",
+    "type": "custom"
+  },
+  {
+    "id": 1003893573,
+    "title": "Đĩa trang trí",
+    "handle": "dia-trang-tri-1",
+    "type": "custom"
+  },
+  {
+    "id": 1003893572,
+    "title": "Hộp cắm bút pewter",
+    "handle": "hop-cam-but-pewter",
+    "type": "custom"
+  },
+  {
+    "id": 1003879666,
+    "title": "Chữ phúc thư pháp",
+    "handle": "chu-phuc-thu-phap",
+    "type": "custom"
+  },
+  {
+    "id": 1003859106,
+    "title": "Quà tặng thầy cô giáo",
+    "handle": "qua-tang-thay-co-giao",
+    "type": "custom"
+  },
+  {
+    "id": 1003861248,
+    "title": "Đôi chim hạc - Quà cưới",
+    "handle": "doi-chim-hac-qua-cuoi",
+    "type": "custom"
+  },
+  {
+    "id": 1003861234,
+    "title": "Hoa sen - Quà cưới",
+    "handle": "hoa-sen-qua-cuoi",
+    "type": "custom"
+  },
+  {
+    "id": 1003861226,
+    "title": "Cá chép - Quà cưới",
+    "handle": "ca-chep-qua-cuoi",
+    "type": "custom"
+  },
+  {
+    "id": 1003861214,
+    "title": "Chim công - Quà cưới",
+    "handle": "chim-cong-qua-cuoi",
+    "type": "custom"
+  },
+  {
+    "id": 1003835970,
+    "title": "Quà Tết Giáp Thìn 2024",
+    "handle": "qua-tet-giap-thin-nam-2024",
+    "type": "custom"
+  },
+  {
+    "id": 1003842548,
+    "title": "Tranh chim công",
+    "handle": "tranh-chim-cong",
+    "type": "custom"
+  },
+  {
+    "id": 1003842540,
+    "title": "Mã đáo",
+    "handle": "ma-dao",
+    "type": "custom"
+  },
+  {
+    "id": 1003842530,
+    "title": "Tranh rồng",
+    "handle": "tranh-rong",
+    "type": "custom"
+  },
+  {
+    "id": 1003842529,
+    "title": "Tượng rồng",
+    "handle": "tuong-rong",
+    "type": "custom"
+  },
+  {
+    "id": 1003620614,
+    "title": "Tranh Thư pháp dát vàng",
+    "handle": "tranh-thu-phap-dat-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003620623,
+    "title": "Tranh Thư pháp hoa sen dát vàng",
+    "handle": "tranh-thu-phap-hoa-sen-dat-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003836711,
+    "title": "Quà tặng Tết 2024 treo tường",
+    "handle": "qua-tang-treo-tuong",
+    "type": "custom"
+  },
+  {
+    "id": 1003836710,
+    "title": "Quà tặng Tết 2024 để bàn",
+    "handle": "qua-tang-de-ban",
+    "type": "custom"
+  },
+  {
+    "id": 1003818716,
+    "title": "BST Hoa Lan",
+    "handle": "bst-hoa-lan",
+    "type": "custom"
+  },
+  {
+    "id": 1003818395,
+    "title": "BST Tranh hoa sen",
+    "handle": "tranh-hoa-sen",
+    "type": "custom"
+  },
+  {
+    "id": 1003759253,
+    "title": "BST Chậu Hoa Sen",
+    "handle": "chau-hoa-sen",
+    "type": "custom"
+  },
+  {
+    "id": 1003783418,
+    "title": "Heo tài lộc",
+    "handle": "heo-tai-loc",
+    "type": "custom"
+  },
+  {
+    "id": 1003781167,
+    "title": "Chậu lan dát vàng 24k",
+    "handle": "chau-lan-dat-vang-24k",
+    "type": "custom"
+  },
+  {
+    "id": 1003618445,
+    "title": "Quà mừng thọ",
+    "handle": "qua-mung-tho-dep-va-y-nghia",
+    "type": "custom"
+  },
+  {
+    "id": 1003618441,
+    "title": "Quà cưới - kỷ niệm ngày cưới",
+    "handle": "qua-cuoi-ky-niem-ngay-cuoi",
+    "type": "custom"
+  },
+  {
+    "id": 1003618449,
+    "title": "Quà tặng hội nghị khách hàng",
+    "handle": "qua-tang-hoi-nghi",
+    "type": "custom"
+  },
+  {
+    "id": 1003618450,
+    "title": "Quà tặng tri ân",
+    "handle": "qua-tang-tri-an",
+    "type": "custom"
+  },
+  {
+    "id": 1003618452,
+    "title": "Quà mừng khai trương",
+    "handle": "qua-mung-khai-truong-dep-tai-loc-va-may-man-cho-nam-quy-mao-2023",
+    "type": "custom"
+  },
+  {
+    "id": 1003756784,
+    "title": "Chim công và hoa mẫu đơn",
+    "handle": "chim-cong-va-hoa-mau-don",
+    "type": "custom"
+  },
+  {
+    "id": 1003749955,
+    "title": "Tranh Bát Mã",
+    "handle": "tranh-bat-ma",
+    "type": "custom"
+  },
+  {
+    "id": 1003749264,
+    "title": "Tranh tứ quý",
+    "handle": "tranh-tu-quy",
+    "type": "custom"
+  },
+  {
+    "id": 1003618465,
+    "title": "Quà tặng khách nước ngoài",
+    "handle": "qua-tang-nguoi-nuoc-ngoai",
+    "type": "custom"
+  },
+  {
+    "id": 1003693020,
+    "title": "Tranh dát vàng - GG shopping",
+    "handle": "tranh-dat-vang-gg-shopping",
+    "type": "custom"
+  },
+  {
+    "id": 1003693019,
+    "title": "Quà tặng đối tác - GG shopping",
+    "handle": "qua-tang-doi-tac-gg-shopping",
+    "type": "custom"
+  },
+  {
+    "id": 1003693001,
+    "title": "Quà tặng sếp - GG shopping",
+    "handle": "qua-tang-sep-gg-shopping",
+    "type": "custom"
+  },
+  {
+    "id": 1003692980,
+    "title": "Quà cưới - GG shopping",
+    "handle": "qua-cuoi-gg-shopping",
+    "type": "custom"
+  },
+  {
+    "id": 1003692950,
+    "title": "Quà tặng tân gia - GG shopping",
+    "handle": "qua-tang-tan-gia-gg-shopping",
+    "type": "custom"
+  },
+  {
+    "id": 1003666587,
+    "title": "Quà ngày cưới, kỷ niệm cưới",
+    "handle": "qua-ngay-cuoi-ky-niem-cuoi",
+    "type": "custom"
+  },
+  {
+    "id": 1003666586,
+    "title": "Quà tặng tân gia",
+    "handle": "qua-tang-tan-gia",
+    "type": "custom"
+  },
+  {
+    "id": 1003657987,
+    "title": "Quà Tặng Sếp Nam QA",
+    "handle": "qua-tang-sep-nam-1",
+    "type": "custom"
+  },
+  {
+    "id": 1003622528,
+    "title": "Tượng, mô hình để bàn",
+    "handle": "tuong-mo-hinh-de-ban",
+    "type": "custom"
+  },
+  {
+    "id": 1003640675,
+    "title": "Nhóm sản phẩm quảng cáo Google",
+    "handle": "nhom-san-pham-quang-cao-google",
+    "type": "custom"
+  },
+  {
+    "id": 1003622526,
+    "title": "Tranh để bàn",
+    "handle": "tranh-de-ban",
+    "type": "custom"
+  },
+  {
+    "id": 1003622525,
+    "title": "Tranh treo tường",
+    "handle": "tranh-treo-tuong",
+    "type": "custom"
+  },
+  {
+    "id": 1003622480,
+    "title": "Sản phẩm bán chạy",
+    "handle": "san-pham-ban-chay",
+    "type": "custom"
+  },
+  {
+    "id": 1003618456,
+    "title": "Quà tặng cho bé",
+    "handle": "qua-tang-cho-be",
+    "type": "custom"
+  },
+  {
+    "id": 1003618463,
+    "title": "Quà tặng sếp nam",
+    "handle": "qua-tang-sep-nam",
+    "type": "custom"
+  },
+  {
+    "id": 1003621444,
+    "title": "Khung ảnh",
+    "handle": "khung-anh",
+    "type": "custom"
+  },
+  {
+    "id": 1003621443,
+    "title": "Cung hoàng đạo",
+    "handle": "cung-hoang-dao",
+    "type": "custom"
+  },
+  {
+    "id": 1003621442,
+    "title": "Chặn giấy",
+    "handle": "chan-giay",
+    "type": "custom"
+  },
+  {
+    "id": 1003621404,
+    "title": "Phong thủy",
+    "handle": "phong-thuy",
+    "type": "custom"
+  },
+  {
+    "id": 1003621250,
+    "title": "Đĩa trang trí",
+    "handle": "dia-trang-tri",
+    "type": "custom"
+  },
+  {
+    "id": 1003621249,
+    "title": "Pha lê đúc vàng",
+    "handle": "pha-le-duc-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003621248,
+    "title": "Pewter, pewter mạ vàng",
+    "handle": "pewter-pewter-ma-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003621247,
+    "title": "Hạnh phúc dát vàng",
+    "handle": "hanh-phuc-dat-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003621228,
+    "title": "Tượng linh vật",
+    "handle": "tuong-linh-vat",
+    "type": "custom"
+  },
+  {
+    "id": 1003621227,
+    "title": "Tranh linh vật",
+    "handle": "tranh-linh-vat",
+    "type": "custom"
+  },
+  {
+    "id": 1003621222,
+    "title": "Phúc Lộc Thọ",
+    "handle": "phuc-loc-tho",
+    "type": "custom"
+  },
+  {
+    "id": 1003621212,
+    "title": "Tranh hoa",
+    "handle": "tranh-hoa",
+    "type": "custom"
+  },
+  {
+    "id": 1003621199,
+    "title": "Chậu cây dát vàng để bàn",
+    "handle": "chau-cay-dat-vang-de-ban",
+    "type": "custom"
+  },
+  {
+    "id": 1003621198,
+    "title": "Tranh hoa sen dát vàng",
+    "handle": "tranh-hoa-sen-dat-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003618464,
+    "title": "Quà tặng sếp nữ",
+    "handle": "qua-tang-sep-nu",
+    "type": "custom"
+  },
+  {
+    "id": 1003618460,
+    "title": "Quà tặng bạn gái",
+    "handle": "qua-tang-ban-gai",
+    "type": "custom"
+  },
+  {
+    "id": 1003618459,
+    "title": "Quà tặng bạn trai",
+    "handle": "qua-tang-ban-trai",
+    "type": "custom"
+  },
+  {
+    "id": 1003618458,
+    "title": "Quà tặng chồng",
+    "handle": "qua-tang-chong",
+    "type": "custom"
+  },
+  {
+    "id": 1003618457,
+    "title": "Quà tặng vợ",
+    "handle": "qua-tang-vo",
+    "type": "custom"
+  },
+  {
+    "id": 1003618455,
+    "title": "Quà tặng mẹ",
+    "handle": "qua-tang-me",
+    "type": "custom"
+  },
+  {
+    "id": 1003618454,
+    "title": "Quà tặng cha",
+    "handle": "qua-tang-cha",
+    "type": "custom"
+  },
+  {
+    "id": 1003618453,
+    "title": "Quà theo đối tượng",
+    "handle": "qua-theo-doi-tuong",
+    "type": "custom"
+  },
+  {
+    "id": 1003618451,
+    "title": "Quà tặng cuối năm, tết",
+    "handle": "qua-tang-cuoi-nam-tet",
+    "type": "custom"
+  },
+  {
+    "id": 1003618448,
+    "title": "Quà tặng doanh nhân",
+    "handle": "qua-tang-doanh-nhan",
+    "type": "custom"
+  },
+  {
+    "id": 1003618447,
+    "title": "Quà Valentine",
+    "handle": "qua-valentine",
+    "type": "custom"
+  },
+  {
+    "id": 1003618446,
+    "title": "Quà tặng thôi nôi(quà đầy tháng)",
+    "handle": "qua-tang-thoi-noi-qua-day-thang",
+    "type": "custom"
+  },
+  {
+    "id": 1003618439,
+    "title": "Quà 8/3 và 20/10 năm 2023",
+    "handle": "qua-8-3-va-20-10-nam-2023",
+    "type": "custom"
+  },
+  {
+    "id": 1003618437,
+    "title": "Quà sự kiện",
+    "handle": "qua-su-kien",
+    "type": "custom"
+  },
+  {
+    "id": 1003618436,
+    "title": "Thịnh vượng",
+    "handle": "thinh-vuong",
+    "type": "custom"
+  },
+  {
+    "id": 1003618435,
+    "title": "Phú quý",
+    "handle": "phu-quy",
+    "type": "custom"
+  },
+  {
+    "id": 1003618433,
+    "title": "Pewter mạ vàng",
+    "handle": "pewter-ma-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003618432,
+    "title": "Pha lê sứ đúc vàng",
+    "handle": "pha-le-su-duc-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003618431,
+    "title": "Danh lam thắng cảnh Việt Nam thương hiệu ACT GOLD",
+    "handle": "danh-lam-thang-canh-viet-nam-thuong-hieu-act-gold",
+    "type": "custom"
+  },
+  {
+    "id": 1003618430,
+    "title": "Quà tặng vinh danh đẹp và ý nghĩa năm Quý Mão 2023",
+    "handle": "qua-tang-vinh-danh-dep-va-y-nghia-nam-quy-mao-2023",
+    "type": "custom"
+  },
+  {
+    "id": 1003618429,
+    "title": "Quà tặng cao cấp",
+    "handle": "qua-tang-cao-cap",
+    "type": "custom"
+  },
+  {
+    "id": 1003618428,
+    "title": "Quà tặng tranh và mô hình ngựa mã đáo thành công",
+    "handle": "qua-tang-tranh-va-mo-hinh-ngua-ma-dao-thanh-cong",
+    "type": "custom"
+  },
+  {
+    "id": 1003618427,
+    "title": "Quà tặng Thuyền Thuận buồm xuôi gió(Thuận Phàm Túy Phong)",
+    "handle": "qua-tang-thuyen-thuan-buom-xuoi-gio-thuan-pham-tuy-phong",
+    "type": "custom"
+  },
+  {
+    "id": 1003618426,
+    "title": "Khung ảnh dát vàng",
+    "handle": "khung-anh-dat-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003618425,
+    "title": "Quà tặng phong thủy năm Quý Mão 2023",
+    "handle": "qua-tang-phong-thuy-nam-quy-mao-2023",
+    "type": "custom"
+  },
+  {
+    "id": 1003618423,
+    "title": "Đĩa biểu trưng dát vàng / Pewter",
+    "handle": "dia-bieu-trung-dat-vang-pewter",
+    "type": "custom"
+  },
+  {
+    "id": 1003618421,
+    "title": "Quà vàng",
+    "handle": "qua-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003618420,
+    "title": "Tượng dát vàng ACT GOLD",
+    "handle": "tuong-dat-vang-act-gold",
+    "type": "custom"
+  },
+  {
+    "id": 1003618419,
+    "title": "Tranh chữ thư pháp đẹp và ý nghĩa",
+    "handle": "tranh-chu-thu-phap-dep-va-y-nghia",
+    "type": "custom"
+  },
+  {
+    "id": 1003618417,
+    "title": "Tranh ngựa",
+    "handle": "tranh-ngua",
+    "type": "custom"
+  },
+  {
+    "id": 1003618416,
+    "title": "Tranh phú quý",
+    "handle": "tranh-phu-quy",
+    "type": "custom"
+  },
+  {
+    "id": 1003618415,
+    "title": "Tranh đôi uyên ương",
+    "handle": "tranh-doi-uyen-uong",
+    "type": "custom"
+  },
+  {
+    "id": 1003618414,
+    "title": "Tranh các loài hoa",
+    "handle": "tranh-cac-loai-hoa",
+    "type": "custom"
+  },
+  {
+    "id": 1003618413,
+    "title": "Tranh phong thủy Ngư Châu Hoa Liên(cá chép hoa sen) dát vàng 24K đẹp, ý nghĩa",
+    "handle": "tranh-phong-thuy-ngu-chau-hoa-lien-ca-chep-hoa-sen-dat-vang-24k-dep-y-nghia",
+    "type": "custom"
+  },
+  {
+    "id": 1003618412,
+    "title": "Tranh cửu ngư quần hội",
+    "handle": "tranh-cuu-ngu-quan-hoi",
+    "type": "custom"
+  },
+  {
+    "id": 1003618411,
+    "title": "Mai Lan Cúc Trúc",
+    "handle": "mai-lan-cuc-truc",
+    "type": "custom"
+  },
+  {
+    "id": 1003618410,
+    "title": "Mai Lan Sen Cúc",
+    "handle": "mai-lan-sen-cuc",
+    "type": "custom"
+  },
+  {
+    "id": 1003618409,
+    "title": "Tùng Cúc Trúc Mai",
+    "handle": "tung-cuc-truc-mai",
+    "type": "custom"
+  },
+  {
+    "id": 1003618408,
+    "title": "Tranh tứ quý dát vàng thương hiệu ACT GOLD",
+    "handle": "tranh-tu-quy-dat-vang-thuong-hieu-act-gold",
+    "type": "custom"
+  },
+  {
+    "id": 1003618407,
+    "title": "Tranh dát vàng",
+    "handle": "tranh-dat-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003618406,
+    "title": "Trang trí phòng thờ",
+    "handle": "trang-tri-phong-tho",
+    "type": "custom"
+  },
+  {
+    "id": 1003618405,
+    "title": "Decor phòng ngủ",
+    "handle": "decor-phong-ngu",
+    "type": "custom"
+  },
+  {
+    "id": 1003618404,
+    "title": "Dercor phòng khách",
+    "handle": "dercor-phong-khach",
+    "type": "custom"
+  },
+  {
+    "id": 1003618403,
+    "title": "Decor nhà cửa",
+    "handle": "decor-nha-cua",
+    "type": "custom"
+  },
+  {
+    "id": 1003618402,
+    "title": "Bộ sưu tập",
+    "handle": "bo-suu-tap",
+    "type": "custom"
+  },
+  {
+    "id": 1003618401,
+    "title": "Tất cả sản phẩm",
+    "handle": "tat-ca-san-pham",
+    "type": "custom"
+  },
+  {
+    "id": 1003618400,
+    "title": "Quà tặng vàng",
+    "handle": "qua-tang-vang",
+    "type": "custom"
+  },
+  {
+    "id": 1003606182,
+    "title": "Sản phẩm nổi bật",
+    "handle": "hot-products",
+    "type": "custom"
+  },
+  {
+    "id": 1003606181,
+    "title": "Sản phẩm khuyến mãi",
+    "handle": "onsale",
+    "type": "custom"
+  },
+  {
+    "id": 1003606180,
+    "title": "Trang chủ",
+    "handle": "frontpage",
+    "type": "custom"
+  },
+  {
+    "id": 1003621388,
+    "title": "Phiên bản giới hạn",
+    "handle": "phien-ban-gioi-han",
+    "type": "smart"
+  },
+  {
+    "id": 1003664061,
+    "title": "Quà tặng sếp nữ QA",
+    "handle": "qua-tang-sep-nu-1",
+    "type": "smart"
+  }
+]

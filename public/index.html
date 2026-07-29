@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quà tặng dát vàng — Chọn quà</title>
+<style>
+  :root{
+    --page-bg:#EFE8D8;
+    --page-bg-2:#E4DAC2;
+    --bg:#F8F4EA;
+    --surface:#FFFDF7;
+    --surface-2:#F1E9D8;
+    --ink:#241F18;
+    --ink-muted:#7C7261;
+    --ink-faint:#A79A85;
+    --brass:#9C7530;
+    --brass-strong:#7E5D22;
+    --brass-soft:#EADCB8;
+    --emerald:#1F4D3D;
+    --emerald-soft:#DCE8DF;
+    --line:#E3D9C2;
+    --device-body:#211C15;
+    --device-hairline:rgba(156,117,48,.35);
+    --shadow:0 30px 70px -25px rgba(30,22,10,.45);
+    --scrim:rgba(20,16,10,.5);
+    --danger:#9C3B2E;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --page-bg:#14110C; --page-bg-2:#1B1712; --bg:#1A160F; --surface:#221C14; --surface-2:#2A2318;
+      --ink:#EFE6D3; --ink-muted:#A99C86; --ink-faint:#7C7261; --brass:#CBA05A; --brass-strong:#E0B76F;
+      --brass-soft:#3A2E1B; --emerald:#5D9A82; --emerald-soft:#20302A; --line:#33291B; --device-body:#0E0C09;
+      --device-hairline:rgba(203,160,90,.3); --shadow:0 30px 70px -25px rgba(0,0,0,.7); --scrim:rgba(0,0,0,.65); --danger:#D08476;
+    }
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100dvh;
+    background: radial-gradient(120% 90% at 50% -10%, var(--page-bg-2), var(--page-bg) 60%);
+    color:var(--ink);
+    font-family: ui-serif, Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .sans{ font-family: -apple-system, "Segoe UI", "Helvetica Neue", Roboto, Arial, sans-serif; }
+  .stage{ min-height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:40px 16px; }
+  .stage-label{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint); display:flex; align-items:center; gap:10px; }
+  .stage-label .dot{width:5px;height:5px;border-radius:50%;background:var(--brass);}
+  .reset-link{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:12px; color:var(--ink-muted); background:none;border:0;cursor:pointer; text-decoration:underline;text-underline-offset:3px; padding:2px 4px; }
+  .reset-link:hover{color:var(--brass-strong);}
+  .device{ width:388px; height:812px; max-height:88dvh; border-radius:48px; background:var(--device-body); padding:12px; box-shadow:var(--shadow), 0 0 0 1px var(--device-hairline); position:relative; }
+  .device::before{ content:""; position:absolute; top:24px; left:50%; transform:translateX(-50%); width:88px; height:20px; border-radius:12px; background:rgba(255,255,255,.06); z-index:5; }
+  .screen-viewport{ position:relative; width:100%; height:100%; border-radius:36px; overflow:hidden; background:var(--bg); box-shadow: inset 0 0 0 1px rgba(255,255,255,.03); }
+  @media (max-width:460px){
+    .stage{padding:0;gap:0;}
+    .stage-label,.foot-caption,.reset-link{display:none;}
+    .device{width:100vw;height:100dvh;max-height:none;border-radius:0;padding:0;box-shadow:none;}
+    .device::before{display:none;}
+    .screen-viewport{border-radius:0;}
+  }
+  .screen{ position:absolute; inset:0; display:flex; flex-direction:column; opacity:0; transform:translateY(10px); transition:opacity .3s ease, transform .3s ease; pointer-events:none; }
+  .screen.active{ opacity:1; transform:translateY(0); pointer-events:auto; z-index:2; }
+  @media (prefers-reduced-motion: reduce){ .screen{transition:none;} }
+  .topbar{ display:flex; align-items:center; gap:10px; padding:22px 18px 10px; font-family: -apple-system, "Segoe UI", Arial, sans-serif; flex:none; }
+  .icon-btn{ width:32px;height:32px;border-radius:50%; display:flex;align-items:center;justify-content:center; background:var(--surface-2); border:1px solid var(--line); color:var(--ink); cursor:pointer; flex:none; }
+  .icon-btn:hover{border-color:var(--brass);}
+  .topbar-title{ flex:1; text-align:center; font-size:14px; font-weight:600; letter-spacing:.02em; color:var(--ink); margin-right:32px; }
+  .progress-dots{ display:flex; justify-content:center; gap:6px; padding:2px 0 14px; flex:none; }
+  .progress-dots span{ width:6px;height:6px;border-radius:50%; background:var(--line); }
+  .progress-dots span.on{ background:var(--brass); }
+  .screen-body{ flex:1; overflow-y:auto; padding:6px 22px 28px; }
+  .home-wrap{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 30px; background: radial-gradient(70% 50% at 50% 18%, var(--brass-soft), transparent 70%); }
+  .brandmark{ width:56px;height:56px;border-radius:50%; border:1px solid var(--brass); display:flex;align-items:center;justify-content:center; margin-bottom:22px; color:var(--brass); }
+  .home-word{ font-size:26px; letter-spacing:.03em; line-height:1.25; margin:0 0 10px; }
+  .home-word em{ font-style:normal; color:var(--brass-strong); }
+  .home-tag{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:13.5px; color:var(--ink-muted); line-height:1.6; max-width:260px; margin:0 0 34px; }
+  .btn{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:14.5px; font-weight:600; border-radius:999px; border:1px solid transparent; padding:14px 26px; cursor:pointer; letter-spacing:.01em; }
+  .btn-primary{ background:var(--brass); color:#221A0C; width:100%; }
+  .btn-primary:hover{ background:var(--brass-strong); }
+  .btn-primary:disabled{ opacity:.5; cursor:default; }
+  .btn-ghost{ background:transparent; color:var(--ink-muted); border:1px solid var(--line); }
+  .btn-ghost:hover{ color:var(--brass-strong); border-color:var(--brass); }
+  .link-btn{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; background:none;border:0;cursor:pointer;color:var(--ink-muted); font-size:13px; text-decoration:underline; text-underline-offset:3px; }
+  .link-btn:hover{ color:var(--brass-strong); }
+  .chip-grid{ display:flex; flex-wrap:wrap; gap:10px; margin-top:6px; }
+  .chip{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:13.5px; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:14px 16px; cursor:pointer; text-align:left; flex:1 1 auto; display:flex; align-items:center; gap:8px; transition:border-color .15s ease, background .15s ease; }
+  .chip:hover{ border-color:var(--brass); }
+  .chip.is-selected{ border-color:var(--brass); background:var(--brass-soft); color:var(--ink); font-weight:600; }
+  .chip-grid.cols-2 .chip{ flex-basis:calc(50% - 5px); }
+  .chip-grid.stack .chip{ flex-basis:100%; justify-content:space-between; }
+  .chip .tick{ opacity:0; color:var(--brass-strong); }
+  .chip.is-selected .tick{ opacity:1; }
+  .summary-row{ display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 4px; }
+  .pill{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:12px; background:var(--emerald-soft); color:var(--emerald); border-radius:999px; padding:6px 12px; font-weight:600; }
+  .accordion{ border-top:1px solid var(--line); margin-top:18px; }
+  .accordion-head{ width:100%; background:none; border:0; cursor:pointer; display:flex; align-items:center; justify-content:space-between; padding:16px 2px; font-family: ui-serif, Georgia, serif; font-size:15px; color:var(--ink); }
+  .accordion-head .chevron{ transition:transform .2s ease; color:var(--ink-muted); }
+  .accordion.open .accordion-head .chevron{ transform:rotate(180deg); }
+  .accordion-panel{ max-height:0; overflow:hidden; transition:max-height .25s ease; }
+  .accordion.open .accordion-panel{ max-height:400px; }
+  .accordion-panel-inner{ padding:2px 2px 18px; }
+  .loading-wrap{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; }
+  .spinner{ width:38px;height:38px;border-radius:50%; border:2px solid var(--line); border-top-color:var(--brass); animation:spin 1s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .spinner{ animation:none; border-top-color:var(--line); } }
+  .loading-text{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:13px; color:var(--ink-muted); }
+  .results-note{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:12px; background:var(--emerald-soft); color:var(--emerald); border-radius:10px; padding:10px 12px; margin:4px 0 16px; line-height:1.5; }
+  .card-list{ display:flex; flex-direction:column; gap:12px; }
+  .product-card{ display:flex; gap:12px; align-items:flex-start; background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:14px; cursor:pointer; text-align:left; width:100%; animation:rise .35s ease both; }
+  @media (prefers-reduced-motion: reduce){ .product-card{ animation:none; } }
+  @keyframes rise{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+  .product-card:hover{ border-color:var(--brass); }
+  .badge{ width:52px;height:52px;border-radius:14px; flex:none; background:var(--brass-soft); color:var(--brass-strong); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .badge img{ width:100%; height:100%; object-fit:cover; }
+  .product-info{ flex:1; min-width:0; }
+  .product-name{ font-size:15px; line-height:1.35; margin:0 0 4px; }
+  .product-price{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:13px; color:var(--brass-strong); font-weight:700; margin:0 0 8px; }
+  .reason-row{ display:flex; gap:6px; flex-wrap:wrap; }
+  .reason-tag{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:10.5px; color:var(--emerald); background:var(--emerald-soft); border-radius:999px; padding:4px 8px; }
+  .reshuffle-bar{ flex:none; padding:14px 22px 22px; border-top:1px solid var(--line); background:var(--bg); }
+  .sheet-scrim{ position:absolute; inset:0; background:var(--scrim); opacity:0; pointer-events:none; transition:opacity .25s ease; z-index:8; }
+  .sheet-scrim.show{ opacity:1; pointer-events:auto; }
+  .sheet{ position:absolute; left:0; right:0; bottom:0; z-index:9; background:var(--surface); border-radius:26px 26px 0 0; padding:10px 22px 26px; box-shadow:0 -20px 40px rgba(0,0,0,.2); transform:translateY(100%); transition:transform .3s ease; max-height:78%; overflow-y:auto; }
+  .sheet.show{ transform:translateY(0); }
+  @media (prefers-reduced-motion: reduce){ .sheet, .sheet-scrim{ transition:none; } }
+  .sheet-handle{ width:36px;height:4px;border-radius:2px;background:var(--line); margin:6px auto 18px; }
+  .sheet-image-wrap{ position:relative; margin:0 auto 30px; width:58%; max-width:230px; }
+  .sheet-badge{ width:100%; min-height:120px; border-radius:16px 16px 4px 4px; background:var(--brass-soft); color:var(--brass-strong); display:flex;align-items:center;justify-content:center; overflow:hidden; }
+  .sheet-badge img{ width:100%; height:auto; display:block; }
+  .tag-chip{
+    position:absolute;
+    display:flex; align-items:center; justify-content:center; text-align:center;
+    overflow:hidden;
+    transition:opacity .2s ease;
+  }
+  .tag-chip-text{
+    line-height:1.2; word-break:break-word; letter-spacing:.01em; font-size:12px;
+    max-width:100%;
+  }
+  .tag-chip.style-engrave{ background:none; border:none; box-shadow:none; padding:1px; }
+  .tag-chip.style-engrave .tag-chip-text{
+    font-family: ui-serif, Georgia, serif; color:#E8CE8E; letter-spacing:.03em;
+    text-shadow: 0 1px 3px rgba(0,0,0,.65), 0 1px 6px rgba(0,0,0,.35);
+  }
+  .tag-chip.style-engrave.is-placeholder .tag-chip-text{ color:rgba(232,206,142,.6); }
+  .tag-chip.style-sticker{
+    background:linear-gradient(135deg, #F0D48A, #B9872F);
+    border:1px solid rgba(120,86,26,.45); border-radius:3px;
+    box-shadow:0 6px 14px rgba(20,16,10,.3);
+    padding:3px 6px;
+  }
+  .tag-chip.style-sticker .tag-chip-text{
+    font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-weight:700; color:#2A1F10;
+  }
+  .tag-chip.style-sticker.is-placeholder{ opacity:.6; }
+  .tag-chip.style-sticker.is-placeholder .tag-chip-text{ color:#5B4A2C; }
+
+  .tag-advisor-note{
+    display:none; font-size:12px; color:var(--ink-muted); line-height:1.6;
+    background:var(--surface-2); border-radius:10px; padding:10px 12px; margin:0 0 16px;
+  }
+  .tag-style-toggle{ display:flex; gap:8px; }
+  .tag-style-btn{
+    flex:1; font-size:13px; padding:9px 10px; border-radius:10px;
+    border:1px solid var(--line); background:var(--surface); color:var(--ink-muted); cursor:pointer;
+  }
+  .tag-style-btn:hover{ border-color:var(--brass); }
+  .tag-style-btn.is-active{ border-color:var(--brass); background:var(--brass-soft); color:var(--ink); font-weight:600; }
+  .sheet-title{ font-size:19px; margin:0 0 6px; }
+  .sheet-price{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; color:var(--brass-strong); font-weight:700; font-size:14px; margin:0 0 12px;}
+  .sheet-desc{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:13.5px; color:var(--ink-muted); line-height:1.7; margin:0 0 16px;}
+  .tag-counter{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:11px; color:var(--ink-faint); text-align:right; margin-top:5px; }
+  .sheet-actions{ display:flex; flex-direction:column; gap:10px; margin-top:6px; }
+  .field{ margin-bottom:16px; }
+  .field label{ display:block; font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:12px; color:var(--ink-muted); margin-bottom:6px; }
+  .field input, .field select, .field textarea{ width:100%; font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:14px; color:var(--ink); background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:11px 12px; }
+  .field input:focus, .field select:focus, .field textarea:focus{ outline:2px solid var(--brass); outline-offset:1px; border-color:var(--brass); }
+  .field textarea{ resize:vertical; min-height:70px; font-family:inherit; }
+  .field-error{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:11.5px; color:var(--danger); margin-top:5px; }
+  .form-note{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:12px; color:var(--ink-muted); line-height:1.6; margin:2px 0 20px; }
+  .done-wrap{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 30px; }
+  .done-badge{ width:60px;height:60px;border-radius:50%; background:var(--emerald-soft); color:var(--emerald); display:flex; align-items:center; justify-content:center; margin-bottom:20px; }
+  .done-title{ font-size:19px; margin:0 0 10px; }
+  .done-text{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:13.5px; color:var(--ink-muted); line-height:1.7; max-width:260px; margin:0 0 28px; }
+  .toast{ position:absolute; left:50%; bottom:26px; transform:translate(-50%,10px); background:var(--ink); color:var(--bg); font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:12.5px; padding:10px 16px; border-radius:999px; z-index:20; opacity:0; transition:opacity .2s ease, transform .2s ease; pointer-events:none; white-space:nowrap; }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
+  .foot-caption{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:11.5px; color:var(--ink-faint); text-align:center; max-width:320px; line-height:1.6; }
+  a:focus-visible, button:focus-visible, [tabindex]:focus-visible{ outline:2px solid var(--brass); outline-offset:2px; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="stage-label"><span class="dot"></span>DỮ LIỆU THẬT &nbsp;·&nbsp; QUATANGDATVANG.COM</div>
+
+  <div class="device">
+    <div class="screen-viewport" id="viewport">
+
+      <section class="screen" data-screen="home">
+        <div class="topbar sans"><div style="width:32px"></div><div class="topbar-title" style="margin-right:0"></div></div>
+        <div class="home-wrap">
+          <div class="brandmark">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3l2.2 4.5L19 8.2l-3.5 3.4.8 4.9L12 14.2 7.7 16.5l.8-4.9L5 8.2l4.8-.7L12 3z"/></svg>
+          </div>
+          <h1 class="home-word">Quà tặng <em>dát vàng</em></h1>
+          <p class="home-tag">Trả lời vài câu hỏi ngắn — chúng tôi chọn sẵn đúng món quà phù hợp, không cần lướt qua hàng trăm sản phẩm.</p>
+          <button class="btn btn-primary" id="btnStart">Bắt đầu tìm quà</button>
+          <button class="link-btn" style="margin-top:16px" id="btnWholesaleFromHome">Mua số lượng lớn / quà tặng doanh nghiệp?</button>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="occasion">
+        <div class="topbar sans"><button class="icon-btn" data-back aria-label="Quay lại"></button><div class="topbar-title">Dịp tặng là gì?</div></div>
+        <div class="progress-dots"><span class="on"></span><span></span><span></span></div>
+        <div class="screen-body"><div class="chip-grid cols-2" id="occasionGrid"></div></div>
+      </section>
+
+      <section class="screen" data-screen="budget">
+        <div class="topbar sans"><button class="icon-btn" data-back aria-label="Quay lại"></button><div class="topbar-title">Ngân sách của bạn?</div></div>
+        <div class="progress-dots"><span class="on"></span><span class="on"></span><span></span></div>
+        <div class="screen-body"><div class="chip-grid stack" id="budgetGrid"></div></div>
+      </section>
+
+      <section class="screen" data-screen="confirm">
+        <div class="topbar sans"><button class="icon-btn" data-back aria-label="Quay lại"></button><div class="topbar-title">Xem lại lựa chọn</div></div>
+        <div class="progress-dots"><span class="on"></span><span class="on"></span><span class="on"></span></div>
+        <div class="screen-body">
+          <div class="summary-row" id="summaryRow"></div>
+          <div class="accordion" id="accRelationship">
+            <button class="accordion-head sans" data-toggle-acc="accRelationship">Tặng cho ai? <span class="chevron">⌄</span></button>
+            <div class="accordion-panel"><div class="accordion-panel-inner"><div class="chip-grid cols-2" id="relationshipGrid"></div></div></div>
+          </div>
+          <div class="accordion" id="accStyle">
+            <button class="accordion-head sans" data-toggle-acc="accStyle">Phong cách yêu thích? <span class="chevron">⌄</span></button>
+            <div class="accordion-panel"><div class="accordion-panel-inner"><div class="chip-grid cols-2" id="styleGrid"></div></div></div>
+          </div>
+          <div style="margin-top:28px"><button class="btn btn-primary" id="btnSeeResults">Xem gợi ý phù hợp</button></div>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="loading">
+        <div class="loading-wrap"><div class="spinner"></div><div class="loading-text sans">Đang chọn những món quà phù hợp nhất…</div></div>
+      </section>
+
+      <section class="screen" data-screen="results">
+        <div class="topbar sans">
+          <button class="icon-btn" data-back aria-label="Quay lại"></button>
+          <div class="topbar-title">Gợi ý cho bạn</div>
+          <button class="icon-btn" id="btnWholesaleFromResults" aria-label="Mua số lượng lớn" title="Mua số lượng lớn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="8" width="18" height="12" rx="1.5"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        </div>
+        <div class="screen-body" id="resultsBody" style="padding-bottom:8px;">
+          <div id="resultsNoteSlot"></div>
+          <div class="card-list" id="cardList"></div>
+        </div>
+        <div class="reshuffle-bar"><button class="btn btn-ghost" style="width:100%" id="btnReshuffle">Chưa ưng lắm, gợi ý bộ khác</button></div>
+
+        <div class="sheet-scrim" id="sheetScrim"></div>
+        <div class="sheet" id="detailSheet">
+          <div class="sheet-handle"></div>
+          <div class="sheet-image-wrap">
+            <div class="sheet-badge" id="sheetBadge"></div>
+            <div class="tag-chip style-engrave" id="tagChip"><span class="tag-chip-text" id="tagChipText"></span></div>
+          </div>
+          <h2 class="sheet-title" id="sheetTitle"></h2>
+          <p class="sheet-price" id="sheetPrice"></p>
+          <p class="sheet-desc" id="sheetDesc"></p>
+
+          <div id="tagSection">
+            <div class="field">
+              <label>Kiểu thể hiện nội dung</label>
+              <div class="tag-style-toggle sans">
+                <button type="button" class="tag-style-btn is-active" id="tagStyleEngrave" data-style="engrave">Khắc bảng</button>
+                <button type="button" class="tag-style-btn" id="tagStyleSticker" data-style="sticker">Dán tem</button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="tagInput">Nội dung khắc / in lên thẻ (tuỳ chọn)</label>
+              <textarea id="tagInput" class="sans" maxlength="60" rows="2" placeholder="VD: Kính chúc Anh Nam sức khoẻ và thành công"></textarea>
+              <div class="tag-counter sans" id="tagCounter">0/60 ký tự</div>
+            </div>
+          </div>
+          <p class="tag-advisor-note sans" id="tagAdvisorNote">Sản phẩm này có nhiều cách khắc/in riêng — tư vấn viên sẽ trao đổi cụ thể với bạn khi đặt hàng.</p>
+
+          <div class="sheet-actions">
+            <a class="btn btn-ghost" style="text-align:center; text-decoration:none;" id="btnViewSite" href="#" target="_blank" rel="noopener">Xem trên website</a>
+            <button class="btn btn-primary" id="btnZalo">Đặt qua Zalo</button>
+            <button class="btn btn-ghost" id="btnCloseSheet">Đóng</button>
+          </div>
+        </div>
+        <div class="toast sans" id="toast"></div>
+      </section>
+
+      <section class="screen" data-screen="wholesale">
+        <div class="topbar sans"><button class="icon-btn" data-back aria-label="Quay lại"></button><div class="topbar-title">Đặt số lượng lớn</div></div>
+        <div class="screen-body">
+          <p class="form-note">Để lại thông tin — tư vấn viên sẽ liên hệ trực tiếp qua Zalo để chốt sản phẩm và số lượng phù hợp.</p>
+          <form id="wholesaleForm" class="sans" novalidate>
+            <div class="field"><label for="wsName">Họ tên</label><input id="wsName" type="text" autocomplete="name" /><div class="field-error" id="errName"></div></div>
+            <div class="field"><label for="wsZalo">Số Zalo / điện thoại</label><input id="wsZalo" type="tel" autocomplete="tel" /><div class="field-error" id="errZalo"></div></div>
+            <div class="field"><label for="wsOccasion">Dịp tặng</label><select id="wsOccasion"></select></div>
+            <div class="field"><label for="wsQty">Số lượng dự kiến</label><input id="wsQty" type="text" placeholder="Ví dụ: 50 – 100 phần quà" /></div>
+            <div class="field"><label for="wsNote">Ghi chú (không bắt buộc)</label><textarea id="wsNote" placeholder="Ngân sách mong muốn, yêu cầu khắc tên, thời gian cần giao…"></textarea></div>
+            <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px;">Gửi yêu cầu tư vấn</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="screen" data-screen="wholesaleDone">
+        <div class="topbar sans"><div style="width:32px"></div><div class="topbar-title" style="margin-right:0"></div></div>
+        <div class="done-wrap">
+          <div class="done-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12l5 5L20 6"/></svg></div>
+          <h2 class="done-title">Đã ghi nhận yêu cầu</h2>
+          <p class="done-text">Tư vấn viên sẽ liên hệ với bạn qua Zalo trong vòng 30 phút (giờ hành chính) để tư vấn sản phẩm và báo giá theo số lượng.</p>
+          <button class="btn btn-ghost" id="btnDoneHome">Về trang chủ</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <button class="reset-link" id="btnReset">↺ Đặt lại</button>
+  <p class="foot-caption">Sản phẩm, giá và ảnh lấy trực tiếp từ quatangdatvang.com. "Đặt qua Zalo" và thời gian phản hồi trong bản demo này vẫn đang minh hoạ, chưa nối Zalo OA thật.</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  function $(sel, root){ return (root||document).querySelector(sel); }
+  function $all(sel, root){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); }
+  var CHEVRON_LEFT = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
+  var GIFT_ICON = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="9" width="16" height="11" rx="1"/><path d="M4 13h16"/><path d="M12 9v11"/><path d="M12 9c-1.2-3-3-4-4.2-3.2C6.4 6.6 7 9 12 9zM12 9c1.2-3 3-4 4.2-3.2C17.6 6.6 17 9 12 9z"/></svg>';
+
+  function formatPrice(n){
+    if (typeof n !== "number") return "";
+    return n.toLocaleString("vi-VN") + "đ";
+  }
+
+  var OCCASIONS = [
+    {id:'sinhnhat', label:'Sinh nhật'},
+    {id:'kyniem', label:'Kỷ niệm ngày cưới'},
+    {id:'tannha', label:'Tân gia'},
+    {id:'khaitruong', label:'Khai trương'},
+    {id:'tet', label:'Tết Nguyên Đán'},
+    {id:'valentine', label:'Valentine'},
+    {id:'phunu', label:'8/3 & 20/10'},
+    {id:'totnghiep', label:'Tốt nghiệp'},
+    {id:'thangchuc', label:'Thăng chức / Về hưu'},
+    {id:'camon', label:'Cảm ơn đối tác'},
+    {id:'hoinghi', label:'Hội nghị khách hàng'},
+    {id:'congty', label:'Sinh nhật công ty'},
+    {id:'mungtho', label:'Mừng thọ'},
+    {id:'daythang', label:'Đầy tháng / Thôi nôi'}
+  ];
+  var TIERS = [
+    {id:'1-3', label:'1 – 3 triệu'},
+    {id:'3-5', label:'3 – 5 triệu'},
+    {id:'5-10', label:'5 – 10 triệu'},
+    {id:'10-20', label:'10 – 20 triệu'},
+    {id:'gt20', label:'Trên 20 triệu'}
+  ];
+  var RELATIONSHIPS = [
+    {id:'giadinh', label:'Bố mẹ / gia đình'},
+    {id:'nguoiyeu', label:'Vợ chồng / người yêu'},
+    {id:'banbe', label:'Bạn bè'},
+    {id:'dongnghiep', label:'Đồng nghiệp'},
+    {id:'sep', label:'Sếp / đối tác'},
+    {id:'doanhnghiep', label:'Khách hàng doanh nghiệp'},
+    {id:'thaycoc', label:'Thầy cô giáo'},
+    {id:'khachnuocngoai', label:'Khách nước ngoài'},
+    {id:'treem', label:'Trẻ em'}
+  ];
+  var STYLES = [
+    {id:'cotdien', label:'Sang trọng cổ điển'},
+    {id:'toigian', label:'Tối giản hiện đại'},
+    {id:'docla', label:'Độc lạ cá tính'},
+    {id:'phongthuy', label:'Phong thuỷ – tâm linh'}
+  ];
+
+  var state = { occasion:null, budgetTier:null, relationship:null, style:null, excluded:[], history:[] };
+  var current = 'home';
+  var lastItems = [];
+
+  function goTo(screenKey, opts){
+    opts = opts || {};
+    if (!opts.replace && current !== screenKey) state.history.push(current);
+    $all('.screen').forEach(function(s){ s.classList.remove('active'); });
+    var next = $('.screen[data-screen="'+screenKey+'"]');
+    if (next) next.classList.add('active');
+    current = screenKey;
+    if (screenKey === 'occasion') renderOccasion();
+    if (screenKey === 'budget') renderBudget();
+    if (screenKey === 'confirm') renderConfirm();
+    if (screenKey === 'wholesale') renderWholesale();
+  }
+  function goBack(){ goTo(state.history.pop() || 'home', {replace:true}); }
+
+  $all('[data-back]').forEach(function(btn){ btn.innerHTML = CHEVRON_LEFT; btn.addEventListener('click', goBack); });
+  $('#btnStart').addEventListener('click', function(){ goTo('occasion'); });
+  $('#btnWholesaleFromHome').addEventListener('click', function(){ goTo('wholesale'); });
+  $('#btnWholesaleFromResults').addEventListener('click', function(){ goTo('wholesale'); });
+  $('#btnReset').addEventListener('click', function(){
+    state = { occasion:null, budgetTier:null, relationship:null, style:null, excluded:[], history:[] };
+    tagData = {};
+    $('#wsName').value=''; $('#wsZalo').value=''; $('#wsQty').value=''; $('#wsNote').value='';
+    goTo('home', {replace:true});
+  });
+  $('#btnDoneHome').addEventListener('click', function(){ goTo('home', {replace:true}); });
+
+  function renderOccasion(){
+    var grid = $('#occasionGrid'); grid.innerHTML='';
+    OCCASIONS.forEach(function(o){
+      var b = document.createElement('button');
+      b.className = 'chip sans' + (state.occasion===o.id ? ' is-selected':'');
+      b.innerHTML = '<span>'+o.label+'</span>';
+      b.addEventListener('click', function(){
+        state.occasion = o.id;
+        $all('.chip', grid).forEach(function(c){c.classList.remove('is-selected');});
+        b.classList.add('is-selected');
+        setTimeout(function(){ goTo('budget'); }, 220);
+      });
+      grid.appendChild(b);
+    });
+  }
+
+  function renderBudget(){
+    var grid = $('#budgetGrid'); grid.innerHTML='';
+    TIERS.forEach(function(t){
+      var b = document.createElement('button');
+      b.className = 'chip sans' + (state.budgetTier===t.id ? ' is-selected':'');
+      b.innerHTML = '<span>'+t.label+'</span><span class="tick">✓</span>';
+      b.addEventListener('click', function(){
+        state.budgetTier = t.id;
+        $all('.chip', grid).forEach(function(c){c.classList.remove('is-selected');});
+        b.classList.add('is-selected');
+        setTimeout(function(){ goTo('confirm'); }, 220);
+      });
+      grid.appendChild(b);
+    });
+  }
+
+  function labelOf(list, id){ var m = list.filter(function(x){return x.id===id;})[0]; return m ? m.label : ''; }
+
+  function renderConfirm(){
+    var row = $('#summaryRow'); row.innerHTML='';
+    [labelOf(OCCASIONS,state.occasion), labelOf(TIERS,state.budgetTier)].forEach(function(txt){
+      if(!txt) return;
+      var p = document.createElement('span'); p.className='pill sans'; p.textContent=txt; row.appendChild(p);
+    });
+    var rg = $('#relationshipGrid'); rg.innerHTML='';
+    RELATIONSHIPS.forEach(function(r){
+      var b = document.createElement('button');
+      b.className = 'chip sans' + (state.relationship===r.id?' is-selected':'');
+      b.textContent = r.label;
+      b.addEventListener('click', function(){ state.relationship = state.relationship===r.id ? null : r.id; renderConfirm(); });
+      rg.appendChild(b);
+    });
+    var sg = $('#styleGrid'); sg.innerHTML='';
+    STYLES.forEach(function(s){
+      var b = document.createElement('button');
+      b.className = 'chip sans' + (state.style===s.id?' is-selected':'');
+      b.textContent = s.label;
+      b.addEventListener('click', function(){ state.style = state.style===s.id ? null : s.id; renderConfirm(); });
+      sg.appendChild(b);
+    });
+  }
+
+  $all('[data-toggle-acc]').forEach(function(btn){
+    btn.addEventListener('click', function(){ $('#'+btn.getAttribute('data-toggle-acc')).classList.toggle('open'); });
+  });
+
+  $('#btnSeeResults').addEventListener('click', function(){
+    state.excluded = [];
+    goTo('loading');
+    runMatch().then(function(){ goTo('results', {replace:true}); });
+  });
+
+  function runMatch(){
+    return fetch('/match', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        occasion: state.occasion,
+        budgetTier: state.budgetTier,
+        relationship: state.relationship,
+        style: state.style,
+        excludedIds: state.excluded
+      })
+    })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        lastItems = data.items || [];
+        lastItems.forEach(function(p){ state.excluded.push(p.id); });
+        renderResults(lastItems, data.relaxed || {});
+      })
+      .catch(function(err){
+        console.error(err);
+        renderResults([], { exhausted: true });
+        var note = $('#resultsNoteSlot');
+        note.innerHTML = '<div class="results-note sans">Không kết nối được tới server — kiểm tra lại "node server.js" có đang chạy không.</div>';
+      });
+  }
+
+  function renderResults(list, relaxed){
+    var body = $('#cardList'); body.innerHTML='';
+    var noteSlot = $('#resultsNoteSlot'); noteSlot.innerHTML='';
+
+    if (relaxed.exhausted){
+      var note = document.createElement('div');
+      note.className='results-note sans';
+      note.textContent = 'Đã xem gần hết lựa chọn phù hợp — để chọn chính xác hơn nữa, hãy kết nối với tư vấn viên.';
+      noteSlot.appendChild(note);
+      var connectBtn = document.createElement('button');
+      connectBtn.className = 'btn btn-primary'; connectBtn.style.width='100%'; connectBtn.style.marginBottom='14px';
+      connectBtn.textContent = 'Kết nối tư vấn viên qua Zalo';
+      connectBtn.addEventListener('click', function(){ goTo('wholesale'); });
+      noteSlot.appendChild(connectBtn);
+    } else if (relaxed.budget || relaxed.occasion){
+      var note2 = document.createElement('div');
+      note2.className='results-note sans';
+      note2.textContent = relaxed.occasion
+        ? 'Đã mở rộng lựa chọn sang các dịp gần tương tự để có thêm gợi ý phù hợp.'
+        : 'Đã mở rộng nhẹ ngân sách để có thêm lựa chọn phù hợp.';
+      noteSlot.appendChild(note2);
+    }
+
+    list.forEach(function(p, i){
+      var card = document.createElement('button');
+      card.className = 'product-card';
+      card.style.animationDelay = (i*0.05)+'s';
+      var tagsHtml = (p.reasons || []).map(function(t){ return '<span class="reason-tag">'+t+'</span>'; }).join('');
+      var badgeInner = p.image ? '<img src="'+p.image+'" alt="" loading="lazy">' : GIFT_ICON;
+      card.innerHTML =
+        '<div class="badge">'+badgeInner+'</div>'+
+        '<div class="product-info">'+
+          '<p class="product-name">'+p.title+'</p>'+
+          '<p class="product-price sans">'+formatPrice(p.price)+'</p>'+
+          '<div class="reason-row">'+tagsHtml+'</div>'+
+        '</div>';
+      card.addEventListener('click', function(){ openSheet(p); });
+      body.appendChild(card);
+    });
+
+    var rsBtn = $('#btnReshuffle');
+    rsBtn.disabled = !!relaxed.exhausted;
+    rsBtn.textContent = relaxed.exhausted ? 'Đã hết gợi ý phù hợp' : 'Chưa ưng lắm, gợi ý bộ khác';
+    rsBtn.style.opacity = relaxed.exhausted ? '0.5' : '1';
+  }
+
+  $('#btnReshuffle').addEventListener('click', function(){
+    runMatch();
+    $('#resultsBody').scrollTop = 0;
+  });
+
+  var tagData = {};
+  var currentSheetProduct = null;
+  var currentTagStyle = 'engrave';
+  var TAG_PLACEHOLDER = 'Kính chúc Anh Nam sức khoẻ và thành công';
+  var TAG_MAXLEN = 60;
+
+  function detectProductCategory(title){
+    var t = (title || '').toLowerCase();
+    if (t.indexOf('đĩa') > -1) return 'dia';
+    if (t.indexOf('tượng') > -1) return 'tuong';
+    if (t.indexOf('tranh') > -1) return 'tranh';
+    return 'other';
+  }
+
+  var FALLBACK_ZONE = { leftPct: 30, rightPct: 70, topPct: 84, bottomPct: 96 };
+
+  function positionTagChip(zone){
+    var chip = $('#tagChip');
+    chip.style.left = zone.leftPct + '%';
+    chip.style.right = (100 - zone.rightPct) + '%';
+    chip.style.top = zone.topPct + '%';
+    chip.style.bottom = (100 - zone.bottomPct) + '%';
+  }
+
+  function shrinkTagTextToFit(){
+    var chip = $('#tagChip'), chipText = $('#tagChipText');
+    var maxFont = 13, minFont = 6;
+    var fontSize = maxFont;
+    chipText.style.fontSize = fontSize + 'px';
+    var guard = 0;
+    while (guard < 30 && fontSize > minFont &&
+      (chipText.scrollWidth > chip.clientWidth || chipText.scrollHeight > chip.clientHeight)){
+      fontSize -= 0.5;
+      chipText.style.fontSize = fontSize + 'px';
+      guard++;
+    }
+  }
+
+  function updateTagChip(text, styleName){
+    var chip = $('#tagChip'), chipText = $('#tagChipText');
+    var value = (text || '').trim();
+    chip.classList.remove('style-engrave', 'style-sticker');
+    chip.classList.add('style-' + styleName);
+    if (value){
+      chip.classList.remove('is-placeholder');
+      chipText.textContent = value;
+    } else {
+      chip.classList.add('is-placeholder');
+      chipText.textContent = TAG_PLACEHOLDER;
+    }
+    requestAnimationFrame(shrinkTagTextToFit);
+  }
+
+  function setTagStyle(styleName){
+    currentTagStyle = styleName;
+    $all('.tag-style-btn').forEach(function(btn){
+      btn.classList.toggle('is-active', btn.getAttribute('data-style') === styleName);
+    });
+    if (currentSheetProduct){
+      var entry = tagData[currentSheetProduct.id] || { text: '', style: 'engrave' };
+      entry.style = styleName;
+      tagData[currentSheetProduct.id] = entry;
+    }
+    updateTagChip($('#tagInput').value, styleName);
+  }
+
+  $('#tagStyleEngrave').addEventListener('click', function(){ setTagStyle('engrave'); });
+  $('#tagStyleSticker').addEventListener('click', function(){ setTagStyle('sticker'); });
+
+  function openSheet(p){
+    currentSheetProduct = p;
+    $('#sheetBadge').innerHTML = p.image ? '<img src="'+p.image+'" alt="">' : GIFT_ICON;
+    $('#sheetTitle').textContent = p.title;
+    $('#sheetPrice').textContent = formatPrice(p.price);
+    $('#sheetDesc').textContent = 'Sản phẩm từ Quà Tặng Dát Vàng.';
+    $('#btnViewSite').href = 'https://quatangdatvang.com/products/' + p.handle;
+
+    var category = p.category || 'other';
+    var chip = $('#tagChip');
+
+    if (category === 'dia'){
+      $('#tagSection').style.display = 'none';
+      $('#tagAdvisorNote').style.display = 'block';
+      chip.style.display = 'none';
+    } else {
+      $('#tagSection').style.display = '';
+      $('#tagAdvisorNote').style.display = 'none';
+      chip.style.display = 'flex';
+      positionTagChip(p.tagZone || FALLBACK_ZONE);
+    }
+
+    var saved = tagData[p.id] || { text: '', style: 'engrave' };
+    currentTagStyle = saved.style;
+    $('#tagInput').value = saved.text;
+    $('#tagCounter').textContent = saved.text.length + '/' + TAG_MAXLEN + ' ký tự';
+    $all('.tag-style-btn').forEach(function(btn){
+      btn.classList.toggle('is-active', btn.getAttribute('data-style') === saved.style);
+    });
+    updateTagChip(saved.text, saved.style);
+
+    $('#sheetScrim').classList.add('show');
+    $('#detailSheet').classList.add('show');
+  }
+  function closeSheet(){ $('#sheetScrim').classList.remove('show'); $('#detailSheet').classList.remove('show'); }
+
+  $('#tagInput').addEventListener('input', function(){
+    var value = this.value;
+    if (currentSheetProduct) tagData[currentSheetProduct.id] = { text: value, style: currentTagStyle };
+    $('#tagCounter').textContent = value.length + '/' + TAG_MAXLEN + ' ký tự';
+    updateTagChip(value, currentTagStyle);
+  });
+  $('#sheetScrim').addEventListener('click', closeSheet);
+  $('#btnCloseSheet').addEventListener('click', closeSheet);
+  $('#btnZalo').addEventListener('click', function(){
+    var entry = currentSheetProduct && tagData[currentSheetProduct.id];
+    var tagText = (entry && entry.text || '').trim();
+    var styleLabel = entry && entry.style === 'sticker' ? 'dán tem' : 'khắc bảng';
+    closeSheet();
+    showToast(tagText ? 'Đã gửi kèm nội dung ' + styleLabel + ': "' + tagText + '" (minh hoạ)' : 'Đã kết nối trợ lý Zalo (minh hoạ)');
+  });
+
+  var toastTimer = null;
+  function showToast(msg){
+    var t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+
+  function renderWholesale(){
+    var sel = $('#wsOccasion'); sel.innerHTML = '<option value="">— Chọn dịp —</option>';
+    OCCASIONS.forEach(function(o){
+      var opt = document.createElement('option');
+      opt.value = o.id; opt.textContent = o.label;
+      if (state.occasion === o.id) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  }
+
+  $('#wholesaleForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    var nameEl = $('#wsName'), zaloEl = $('#wsZalo');
+    var ok = true;
+    $('#errName').textContent=''; $('#errZalo').textContent='';
+    if (!nameEl.value.trim()){ $('#errName').textContent='Vui lòng nhập họ tên.'; ok=false; }
+    if (!zaloEl.value.trim()){ $('#errZalo').textContent='Vui lòng nhập số Zalo hoặc điện thoại.'; ok=false; }
+    if (!ok) return;
+
+    var submitBtn = this.querySelector('button[type="submit"]');
+    var originalLabel = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Đang gửi...';
+
+    fetch('/wholesale-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: nameEl.value.trim(),
+        zalo: zaloEl.value.trim(),
+        occasion: $('#wsOccasion').value,
+        quantity: $('#wsQty').value.trim(),
+        note: $('#wsNote').value.trim()
+      })
+    })
+      .then(function(r){ if (!r.ok) throw new Error('request failed'); return r.json(); })
+      .then(function(){ goTo('wholesaleDone'); })
+      .catch(function(){
+        $('#errZalo').textContent = 'Gửi thất bại, kiểm tra kết nối mạng và thử lại.';
+      })
+      .finally(function(){
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalLabel;
+      });
+  });
+
+  goTo('home', {replace:true});
+})();
+</script>
+</body>
+</html>
