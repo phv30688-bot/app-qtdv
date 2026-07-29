@@ -1,80 +1,71 @@
-# qua-tang-app — Bước 1: Kết nối dữ liệu Haravan
+# qua-tang-app
 
-Đây là bước đầu tiên trong [lộ trình kết nối dữ liệu thật](https://claude.ai/code/artifact/4d71fb8f-c9f5-4258-959f-ce3ad3b42bcf): xác nhận có thể đọc được dữ liệu sản phẩm từ quatangdatvang.com (Haravan) trước khi xây bất kỳ phần nào khác.
+App tư vấn chọn quà cho khách hàng Quà Tặng Dát Vàng — dữ liệu sản phẩm đồng bộ thật từ [quatangdatvang.com](https://quatangdatvang.com) (Haravan).
 
-## Bước 1 — Thu hồi key cũ và tạo private app token mới
-
-Vì có một chuỗi giống access token đã được dán vào cuộc trò chuyện trước đó, **coi như key đó đã lộ** — cần thu hồi và tạo mới trước khi dùng. Đăng nhập Haravan Admin bằng đúng **tài khoản chủ sở hữu cửa hàng** (owner) — quyền thấp hơn sẽ không thấy được mục này.
-
-### A. Thu hồi token cũ (nếu có)
-
-1. Ở menu bên trái của Admin, chọn **Apps**.
-2. Bấm vào **Private app**.
-3. Nếu thấy app/token đã tạo trước đó (dùng để lấy ra chuỗi key vừa dán vào chat) → tìm dòng token đó, bấm **nút thùng rác màu đỏ** để xoá. Token bị xoá sẽ ngừng hoạt động ngay lập tức.
-
-### B. Tạo token mới, đúng quyền cần dùng
-
-1. Vẫn trong màn hình **Apps → Private app**, bấm **Create new private app**.
-2. Điền tên app — đặt tên dễ nhận biết, ví dụ `qua-tang-app-sync`.
-3. Ở phần cấu hình quyền truy cập (permissions/scope), tìm nhóm quyền liên quan đến **Products** và tick:
-   - **Read** cho **Products** (tương ứng scope `com.read_products`) — quyền này bao gồm luôn cả đọc Collections/bộ sưu tập, vì trên Haravan collection nằm chung nhóm quyền với product.
-   - (Tuỳ chọn, có thể thêm sau) **Read** cho **Inventory** (`com.read_inventories`) nếu sau này cần đọc số lượng tồn kho.
-   - **Không tick Write** cho bất kỳ mục nào — bước này chỉ cần đọc dữ liệu, không cần sửa/xoá gì trên cửa hàng.
-4. Bấm **Save**.
-5. Màn hình sẽ hiện ra **API key / access token** — bấm copy ngay. Nhiều hệ thống chỉ hiển thị đầy đủ token một lần duy nhất lúc tạo, nên copy và dán luôn vào `.env` (Bước 2 bên dưới) trước khi rời khỏi trang này, tránh phải tạo lại token khác.
-
-Nguồn chính thức đã kiểm tra: [Get started with Haravan APIs](https://docs.haravan.com/docs/get-started/overview/) · [Private app authentication](https://docs.haravan.com/docs/tutorials/authentication/private-app/) · [Access scopes](https://docs.haravan.com/docs/omni-apis/access-scopes/)
-
-**Lưu ý quan trọng:** token này chỉ dán vào file `.env` trên máy bạn (bước 2), **không** dán lại vào khung chat.
-
-## Bước 2 — Điền token vào file `.env`
-
-Trong thư mục này (`C:\Users\Admin\qua-tang-app`):
-
-1. Sao chép file `.env.example` thành `.env`.
-2. Mở `.env`, dán token vừa copy vào dòng `HARAVAN_PRIVATE_TOKEN=`.
-3. File `.env` đã được khai báo trong `.gitignore` nên sẽ không bao giờ bị đưa lên git.
-
-Cách sao chép nhanh bằng PowerShell (chạy trong thư mục `qua-tang-app`):
+## Chạy thử ở máy local
 
 ```powershell
 Copy-Item .env.example .env
-notepad .env
+notepad .env    # dien HARAVAN_PRIVATE_TOKEN va ADMIN_KEY
+npm install
+npm run dev
 ```
 
-## Bước 3 — Chạy thử kết nối
+Mở `http://localhost:3000`. `npm run dev` nạp biến môi trường từ file `.env` — chỉ dùng lệnh này khi chạy ở máy local. Khi deploy lên Render, nền tảng tự cung cấp biến môi trường, dùng `npm start` (không cần file `.env`).
+
+## Đồng bộ lại dữ liệu sản phẩm từ Haravan
+
+Chạy khi catalogue trên Haravan có thay đổi (thêm sản phẩm mới, đổi giá...):
 
 ```powershell
-npm run test:haravan
+npm run sync:catalogue     # lay toan bo san pham + collection tu Haravan
+npm run analyze:images     # quet anh de tim dung vi tri khac/dan tem (mat vai phut)
+npm run apply:taxonomy     # gan dip/doi tuong/phong cach + gop tat ca lai
 ```
 
-Kết quả mong đợi: danh sách 5 sản phẩm đầu tiên (tên, giá, tags) lấy trực tiếp từ quatangdatvang.com.
+Kết quả cuối ghi vào `data/products.enriched.json` — đây là file server đọc lúc chạy. Sau khi chạy xong, **commit và push lại lên GitHub** để Render tự deploy bản mới (xem phần Deploy bên dưới).
 
-- Nếu báo lỗi HTTP 401/403 → token sai hoặc chưa đủ quyền đọc sản phẩm — quay lại Bước 1 kiểm tra scope.
-- Nếu báo lỗi khác → gửi lại nguyên văn thông báo lỗi (không phải token) để debug tiếp.
+## Cấu trúc thư mục
 
-## Bước 4 — Đồng bộ toàn bộ catalogue
+- `server.js` — API `/match` (gợi ý sản phẩm) và `/wholesale-lead` (lưu lead khách sỉ), phục vụ `public/index.html`.
+- `public/index.html` — giao diện app (tĩnh, gọi API ở trên).
+- `scripts/` — các script đồng bộ dữ liệu từ Haravan (chỉ chạy ở máy local, không chạy trên server thật).
+- `data/products.enriched.json` — dữ liệu sản phẩm đã xử lý, server dùng trực tiếp.
+- `data/leads.json` — lead khách sỉ thu thập được (không đưa lên git).
 
-Sau khi `npm run test:haravan` chạy ra 5 sản phẩm mẫu, chạy tiếp:
+## Xem danh sách lead khách sỉ
 
-```powershell
-npm run sync:catalogue
-```
+Vào `http://localhost:3000/admin/leads?key=...` (thay `...` bằng giá trị `ADMIN_KEY` trong file `.env`). Đường link này **không có bảo vệ nào khác ngoài key** — tuyệt đối không chia sẻ công khai.
 
-Script này sẽ:
-- Lấy **toàn bộ** sản phẩm (phân trang tự động, không giới hạn 5 nữa).
-- Lấy toàn bộ collection ("Theo dịp", "Theo đối tượng", "Bộ sưu tập phong thuỷ"...).
-- Đối chiếu từng sản phẩm thuộc collection nào.
-- Ghi kết quả ra `data/collections.json` và `data/products.json` (thư mục `data/` đã nằm trong `.gitignore`, không lên git — vì đây là dữ liệu tạm để phát triển, sẽ đồng bộ định kỳ chứ không phải nguồn dữ liệu gốc).
+Hiện tại lead mới chỉ được lưu vào `data/leads.json` và log ra console (`notifyNewLead` trong `server.js`) — chưa nối Zalo OA thật. Khi có tài khoản Zalo OA + API credentials, sửa hàm `notifyNewLead` trong `server.js` để gọi API Zalo, gửi thông báo tức thời cho sale.
 
-Chạy xong, mở thử `data/collections.json` để xem tên các collection thật — đây sẽ là căn cứ cho bước tiếp theo: map collection sang occasion/relationship/style của app.
+## Deploy lên Render (miễn phí)
 
-## Sau bước này
+Render sẽ tự build & chạy lại mỗi khi bạn push code mới lên GitHub.
 
-1. ✅ Kết nối Haravan API.
-2. ✅ Đồng bộ toàn bộ catalogue + collection về máy.
-3. ⬜ Viết bảng map collection → occasion/relationship/style (dựa trên tên collection thật lấy được ở Bước 4).
-4. ⬜ Dựng API `/match` để prototype gọi vào thay vì dùng dữ liệu mẫu.
-5. ⬜ Chuyển từ file JSON sang database thật (Postgres/Supabase) khi chuẩn bị lên môi trường thật.
+**Chuẩn bị (làm 1 lần):**
 
-Chưa cần làm hết — quay lại đây sau khi Bước 4 chạy thành công.
+1. Tạo tài khoản GitHub (nếu chưa có) tại github.com, tạo một repository mới (private hoặc public đều được), đặt tên ví dụ `qua-tang-app`.
+2. Trong thư mục này, nối repo local với GitHub và đẩy code lên (thay `<URL-repo-cua-ban>` bằng URL repo vừa tạo):
+
+   ```powershell
+   git remote add origin <URL-repo-cua-ban>
+   git branch -M main
+   git push -u origin main
+   ```
+
+3. Tạo tài khoản Render tại render.com (đăng nhập bằng GitHub cho nhanh) → **New** → **Web Service** → chọn đúng repo `qua-tang-app`.
+4. Điền cấu hình:
+   - **Build Command:** `npm install`
+   - **Start Command:** `npm start`
+   - **Instance Type:** Free
+5. Vào tab **Environment** của service, thêm các biến:
+   - `HARAVAN_PRIVATE_TOKEN` = (giá trị thật trong file `.env` của bạn)
+   - `HARAVAN_API_BASE` = `https://apis.haravan.com/com`
+   - `ADMIN_KEY` = (giá trị thật trong file `.env` của bạn)
+6. Bấm **Create Web Service**. Render build xong sẽ cho một URL công khai dạng `https://qua-tang-app-xxxx.onrender.com` — đây là link bạn có thể chia sẻ cho khách dùng thử ngay.
+
+**Lưu ý về gói miễn phí:**
+- Sau 15 phút không ai truy cập, service tự "ngủ" — lượt truy cập đầu tiên sau đó sẽ chậm khoảng 30-60 giây trong khi Render khởi động lại. Các lượt sau bình thường cho đến lần "ngủ" tiếp theo.
+- `data/leads.json` **không đảm bảo được giữ lại lâu dài** trên gói free — mỗi lần Render build lại (khi bạn push code mới), ổ đĩa có thể bị reset. Trước khi có Zalo OA hoặc database thật, nên kiểm tra `/admin/leads` thường xuyên, đừng chỉ tin tưởng vào file này về lâu dài.
+- Muốn hết bị "ngủ" và có lưu trữ ổn định hơn, sau này nâng lên gói trả phí (~$7/tháng) hoặc chuyển `data/leads.json` sang một database thật (Postgres/Supabase) — việc này để làm sau khi đã thử nghiệm ổn.

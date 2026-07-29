@@ -8,7 +8,8 @@
     "sync:catalogue": "node --env-file=.env scripts/sync-catalogue.js",
     "apply:taxonomy": "node scripts/apply-taxonomy.js",
     "analyze:images": "node scripts/analyze-image-bounds.js",
-    "start": "node --env-file=.env server.js"
+    "start": "node server.js",
+    "dev": "node --env-file=.env server.js"
   },
   "keywords": [],
   "author": "",
