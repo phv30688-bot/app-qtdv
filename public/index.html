@@ -708,12 +708,31 @@
   });
   $('#sheetScrim').addEventListener('click', closeSheet);
   $('#btnCloseSheet').addEventListener('click', closeSheet);
+  var ZALO_CONTACT_URL = 'https://zalo.me/0904866869';
+
   $('#btnZalo').addEventListener('click', function(){
-    var entry = currentSheetProduct && tagData[currentSheetProduct.id];
+    var p = currentSheetProduct;
+    var entry = p && tagData[p.id];
     var tagText = (entry && entry.text || '').trim();
-    var styleLabel = entry && entry.style === 'sticker' ? 'dán tem' : 'khắc bảng';
+    var styleLabel = entry && entry.style === 'sticker' ? 'dán tem' : 'khắc';
+
+    var message = p
+      ? 'Tôi muốn đặt: ' + p.title + ' (' + formatPrice(p.price) + ')' +
+        (tagText ? '\nNội dung ' + styleLabel + ': ' + tagText : '')
+      : '';
+
+    // Mo Zalo ngay (dong bo trong user gesture) de trinh duyet khong chan popup,
+    // roi moi thu copy noi dung (khong lam cham/chan viec mo Zalo).
+    window.open(ZALO_CONTACT_URL, '_blank', 'noopener');
     closeSheet();
-    showToast(tagText ? 'Đã gửi kèm nội dung ' + styleLabel + ': "' + tagText + '" (minh hoạ)' : 'Đã kết nối trợ lý Zalo (minh hoạ)');
+
+    if (message && navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(message)
+        .then(function(){ showToast('Đã copy thông tin sản phẩm — dán vào khung chat Zalo nhé!'); })
+        .catch(function(){ showToast('Đang mở Zalo — nhắn kèm tên sản phẩm giúp mình nhé!'); });
+    } else {
+      showToast('Đang mở Zalo — nhắn kèm tên sản phẩm giúp mình nhé!');
+    }
   });
 
   var toastTimer = null;
