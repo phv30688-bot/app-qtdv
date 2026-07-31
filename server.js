@@ -4,8 +4,12 @@
 const path = require("path");
 const fs = require("fs");
 const express = require("express");
+const cors = require("cors");
 
 const app = express();
+// Cho phep goi API tu domain khac (can thiet khi nhung vao Zalo Mini App -
+// giao dien chay tren domain cua Zalo nhung van goi ve API tren Render nay).
+app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
