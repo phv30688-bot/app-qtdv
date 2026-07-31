@@ -1,0 +1,18 @@
+{
+  "app": {
+    "title": "Chọn Quà - Quà Tặng Dát Vàng",
+    "headerTitle": "Chọn quà",
+    "headerColor": "#9C7530",
+    "textColor": "white",
+    "leftButton": "back",
+    "statusBar": "normal",
+    "actionBarHidden": false,
+    "hideAndroidBottomNavigationBar": false,
+    "hideIOSSafeAreaBottom": false
+  },
+  "listCSS": [],
+  "listSyncJS": [
+    "inline.js"
+  ],
+  "listAsyncJS": []
+}

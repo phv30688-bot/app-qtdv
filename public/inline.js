@@ -1,18 +1,4 @@
-<!doctype html>
-<html lang="vi">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Quà tặng dát vàng — Chọn quà</title>
-<meta name="description" content="Chọn đúng quà tặng dát vàng phù hợp dịp và ngân sách của bạn." />
-<link rel="manifest" href="/manifest.json" />
-<link rel="icon" href="/icons/icon-192.png" />
-<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
-<meta name="theme-color" content="#9C7530" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Chọn Quà" />
-<style>
+document.head.innerHTML += `<style>
   :root{
     --page-bg:#EFE8D8;
     --page-bg-2:#E4DAC2;
@@ -196,144 +182,15 @@
   .toast.show{ opacity:1; transform:translate(-50%,0); }
   .foot-caption{ font-family: -apple-system, "Segoe UI", Arial, sans-serif; font-size:11.5px; color:var(--ink-faint); text-align:center; max-width:320px; line-height:1.6; }
   a:focus-visible, button:focus-visible, [tabindex]:focus-visible{ outline:2px solid var(--brass); outline-offset:2px; }
-</style>
-</head>
-<body>
-<div class="stage">
-  <div class="stage-label"><span class="dot"></span>DỮ LIỆU THẬT &nbsp;·&nbsp; QUATANGDATVANG.COM</div>
-
-  <div class="device">
-    <div class="screen-viewport" id="viewport">
-
-      <section class="screen" data-screen="home">
-        <div class="topbar sans"><div style="width:32px"></div><div class="topbar-title" style="margin-right:0"></div></div>
-        <div class="home-wrap">
-          <div class="brandmark">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3l2.2 4.5L19 8.2l-3.5 3.4.8 4.9L12 14.2 7.7 16.5l.8-4.9L5 8.2l4.8-.7L12 3z"/></svg>
-          </div>
-          <h1 class="home-word">Quà tặng <em>dát vàng</em></h1>
-          <p class="home-tag">Trả lời vài câu hỏi ngắn — chúng tôi chọn sẵn đúng món quà phù hợp, không cần lướt qua hàng trăm sản phẩm.</p>
-          <button class="btn btn-primary" id="btnStart">Bắt đầu tìm quà</button>
-          <button class="link-btn" style="margin-top:16px" id="btnWholesaleFromHome">Mua số lượng lớn / quà tặng doanh nghiệp?</button>
-        </div>
-      </section>
-
-      <section class="screen" data-screen="occasion">
-        <div class="topbar sans"><button class="icon-btn" data-back aria-label="Quay lại"></button><div class="topbar-title">Dịp tặng là gì?</div></div>
-        <div class="progress-dots"><span class="on"></span><span></span><span></span></div>
-        <div class="screen-body"><div class="chip-grid cols-2" id="occasionGrid"></div></div>
-      </section>
-
-      <section class="screen" data-screen="budget">
-        <div class="topbar sans"><button class="icon-btn" data-back aria-label="Quay lại"></button><div class="topbar-title">Ngân sách của bạn?</div></div>
-        <div class="progress-dots"><span class="on"></span><span class="on"></span><span></span></div>
-        <div class="screen-body"><div class="chip-grid stack" id="budgetGrid"></div></div>
-      </section>
-
-      <section class="screen" data-screen="confirm">
-        <div class="topbar sans"><button class="icon-btn" data-back aria-label="Quay lại"></button><div class="topbar-title">Xem lại lựa chọn</div></div>
-        <div class="progress-dots"><span class="on"></span><span class="on"></span><span class="on"></span></div>
-        <div class="screen-body">
-          <div class="summary-row" id="summaryRow"></div>
-          <div class="accordion" id="accRelationship">
-            <button class="accordion-head sans" data-toggle-acc="accRelationship">Tặng cho ai? <span class="chevron">⌄</span></button>
-            <div class="accordion-panel"><div class="accordion-panel-inner"><div class="chip-grid cols-2" id="relationshipGrid"></div></div></div>
-          </div>
-          <div class="accordion" id="accStyle">
-            <button class="accordion-head sans" data-toggle-acc="accStyle">Phong cách yêu thích? <span class="chevron">⌄</span></button>
-            <div class="accordion-panel"><div class="accordion-panel-inner"><div class="chip-grid cols-2" id="styleGrid"></div></div></div>
-          </div>
-          <div style="margin-top:28px"><button class="btn btn-primary" id="btnSeeResults">Xem gợi ý phù hợp</button></div>
-        </div>
-      </section>
-
-      <section class="screen" data-screen="loading">
-        <div class="loading-wrap"><div class="spinner"></div><div class="loading-text sans">Đang chọn những món quà phù hợp nhất…</div></div>
-      </section>
-
-      <section class="screen" data-screen="results">
-        <div class="topbar sans">
-          <button class="icon-btn" data-back aria-label="Quay lại"></button>
-          <div class="topbar-title">Gợi ý cho bạn</div>
-          <button class="icon-btn" id="btnWholesaleFromResults" aria-label="Mua số lượng lớn" title="Mua số lượng lớn">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="8" width="18" height="12" rx="1.5"/><path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-          </button>
-        </div>
-        <div class="screen-body" id="resultsBody" style="padding-bottom:8px;">
-          <div id="resultsNoteSlot"></div>
-          <div class="card-list" id="cardList"></div>
-        </div>
-        <div class="reshuffle-bar"><button class="btn btn-ghost" style="width:100%" id="btnReshuffle">Chưa ưng lắm, gợi ý bộ khác</button></div>
-
-        <div class="sheet-scrim" id="sheetScrim"></div>
-        <div class="sheet" id="detailSheet">
-          <div class="sheet-handle"></div>
-          <div class="sheet-image-wrap">
-            <div class="sheet-badge" id="sheetBadge"></div>
-            <div class="tag-chip style-engrave" id="tagChip"><span class="tag-chip-text" id="tagChipText"></span></div>
-          </div>
-          <h2 class="sheet-title" id="sheetTitle"></h2>
-          <p class="sheet-price" id="sheetPrice"></p>
-          <p class="sheet-desc" id="sheetDesc"></p>
-
-          <div id="tagSection">
-            <div class="field">
-              <label>Kiểu thể hiện nội dung</label>
-              <div class="tag-style-toggle sans">
-                <button type="button" class="tag-style-btn is-active" id="tagStyleEngrave" data-style="engrave">Khắc bảng</button>
-                <button type="button" class="tag-style-btn" id="tagStyleSticker" data-style="sticker">Dán tem</button>
-              </div>
-            </div>
-            <div class="field">
-              <label for="tagInput">Nội dung khắc / in lên thẻ (tuỳ chọn)</label>
-              <textarea id="tagInput" class="sans" maxlength="60" rows="2" placeholder="VD: Kính chúc Anh Nam sức khoẻ và thành công"></textarea>
-              <div class="tag-counter sans" id="tagCounter">0/60 ký tự</div>
-            </div>
-          </div>
-          <p class="tag-advisor-note sans" id="tagAdvisorNote">Sản phẩm này có nhiều cách khắc/in riêng — tư vấn viên sẽ trao đổi cụ thể với bạn khi đặt hàng.</p>
-
-          <div class="sheet-actions">
-            <a class="btn btn-ghost" style="text-align:center; text-decoration:none;" id="btnViewSite" href="#" target="_blank" rel="noopener">Xem trên website</a>
-            <button class="btn btn-primary" id="btnZalo">Đặt qua Zalo</button>
-            <button class="btn btn-ghost" id="btnCloseSheet">Đóng</button>
-          </div>
-        </div>
-        <div class="toast sans" id="toast"></div>
-      </section>
-
-      <section class="screen" data-screen="wholesale">
-        <div class="topbar sans"><button class="icon-btn" data-back aria-label="Quay lại"></button><div class="topbar-title">Đặt số lượng lớn</div></div>
-        <div class="screen-body">
-          <p class="form-note">Để lại thông tin — tư vấn viên sẽ liên hệ trực tiếp qua Zalo để chốt sản phẩm và số lượng phù hợp.</p>
-          <form id="wholesaleForm" class="sans" novalidate>
-            <div class="field"><label for="wsName">Họ tên</label><input id="wsName" type="text" autocomplete="name" /><div class="field-error" id="errName"></div></div>
-            <div class="field"><label for="wsZalo">Số Zalo / điện thoại</label><input id="wsZalo" type="tel" autocomplete="tel" /><div class="field-error" id="errZalo"></div></div>
-            <div class="field"><label for="wsOccasion">Dịp tặng</label><select id="wsOccasion"></select></div>
-            <div class="field"><label for="wsQty">Số lượng dự kiến</label><input id="wsQty" type="text" placeholder="Ví dụ: 50 – 100 phần quà" /></div>
-            <div class="field"><label for="wsNote">Ghi chú (không bắt buộc)</label><textarea id="wsNote" placeholder="Ngân sách mong muốn, yêu cầu khắc tên, thời gian cần giao…"></textarea></div>
-            <button type="submit" class="btn btn-primary" style="width:100%; margin-top:6px;">Gửi yêu cầu tư vấn</button>
-          </form>
-        </div>
-      </section>
-
-      <section class="screen" data-screen="wholesaleDone">
-        <div class="topbar sans"><div style="width:32px"></div><div class="topbar-title" style="margin-right:0"></div></div>
-        <div class="done-wrap">
-          <div class="done-badge"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12l5 5L20 6"/></svg></div>
-          <h2 class="done-title">Đã ghi nhận yêu cầu</h2>
-          <p class="done-text">Tư vấn viên sẽ liên hệ với bạn qua Zalo trong vòng 30 phút (giờ hành chính) để tư vấn sản phẩm và báo giá theo số lượng.</p>
-          <button class="btn btn-ghost" id="btnDoneHome">Về trang chủ</button>
-        </div>
-      </section>
-
-    </div>
-  </div>
-
-  <button class="reset-link" id="btnReset">↺ Đặt lại</button>
-  <p class="foot-caption">Sản phẩm, giá và ảnh lấy trực tiếp từ quatangdatvang.com. "Đặt qua Zalo" và thời gian phản hồi trong bản demo này vẫn đang minh hoạ, chưa nối Zalo OA thật.</p>
-</div>
-
-<script>
+</style>`;
+document.head.innerHTML += `<meta charset="utf-8"/>`;
+document.head.innerHTML += `<meta name="viewport" content="width=device-width, initial-scale=1"/>`;
+document.head.innerHTML += `<meta name="description" content="Chọn đúng quà tặng dát vàng phù hợp dịp và ngân sách của bạn."/>`;
+document.head.innerHTML += `<meta name="theme-color" content="#9C7530"/>`;
+document.head.innerHTML += `<meta name="apple-mobile-web-app-capable" content="yes"/>`;
+document.head.innerHTML += `<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>`;
+document.head.innerHTML += `<meta name="apple-mobile-web-app-title" content="Chọn Quà"/>`;
+document.body.innerHTML += `<script>
 (function(){
   "use strict";
 
@@ -341,13 +198,6 @@
   function $all(sel, root){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); }
   var CHEVRON_LEFT = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
   var GIFT_ICON = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="9" width="16" height="11" rx="1"/><path d="M4 13h16"/><path d="M12 9v11"/><path d="M12 9c-1.2-3-3-4-4.2-3.2C6.4 6.6 7 9 12 9zM12 9c1.2-3 3-4 4.2-3.2C17.6 6.6 17 9 12 9z"/></svg>';
-
-  // Khi chay tren domain rieng (Render) dung duong dan tuong doi la du.
-  // Khi nhung vao Zalo Mini App, giao dien duoc host tren domain cua Zalo nen
-  // phai goi API bang URL day du toi backend that (Render).
-  var API_BASE = (location.hostname === 'localhost' || location.hostname.endsWith('.onrender.com'))
-    ? ''
-    : 'https://app-qtdv-1.onrender.com';
 
   function formatPrice(n){
     if (typeof n !== "number") return "";
@@ -502,7 +352,7 @@
 
   function fetchMatchWithRetry(payload, attempt){
     attempt = attempt || 0;
-    return fetch(API_BASE + '/match', {
+    return fetch('/match', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -579,7 +429,7 @@
       card.className = 'product-card';
       card.style.animationDelay = (i*0.05)+'s';
       var tagsHtml = (p.reasons || []).map(function(t){ return '<span class="reason-tag">'+t+'</span>'; }).join('');
-      var badgeInner = p.image ? '<img src="'+p.image+'" alt="" loading="lazy">' : GIFT_ICON;
+      var badgeInner = p.image ? '<img src="'+p.image+'" alt loading="lazy"/>' : GIFT_ICON;
       card.innerHTML =
         '<div class="badge">'+badgeInner+'</div>'+
         '<div class="product-info">'+
@@ -673,7 +523,7 @@
 
   function openSheet(p){
     currentSheetProduct = p;
-    $('#sheetBadge').innerHTML = p.image ? '<img src="'+p.image+'" alt="">' : GIFT_ICON;
+    $('#sheetBadge').innerHTML = p.image ? '<img src="'+p.image+'" alt/>' : GIFT_ICON;
     $('#sheetTitle').textContent = p.title;
     $('#sheetPrice').textContent = formatPrice(p.price);
     $('#sheetDesc').textContent = 'Sản phẩm từ Quà Tặng Dát Vàng.';
@@ -752,7 +602,7 @@
   }
 
   function renderWholesale(){
-    var sel = $('#wsOccasion'); sel.innerHTML = '<option value="">— Chọn dịp —</option>';
+    var sel = $('#wsOccasion'); sel.innerHTML = '<option value>— Chọn dịp —</option>';
     OCCASIONS.forEach(function(o){
       var opt = document.createElement('option');
       opt.value = o.id; opt.textContent = o.label;
@@ -775,7 +625,7 @@
     submitBtn.disabled = true;
     submitBtn.textContent = 'Đang gửi...';
 
-    fetch(API_BASE + '/wholesale-lead', {
+    fetch('/wholesale-lead', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -805,6 +655,4 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(function(err){ console.error('SW loi:', err); });
   });
 }
-</script>
-</body>
-</html>
+</script>`;
