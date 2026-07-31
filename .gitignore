@@ -4,3 +4,7 @@ node_modules/
 # Du lieu san pham (products.enriched.json...) CAN duoc commit vi server doc luc chay,
 # nhung leads.json chua thong tin khach hang that nen khong bao gio dua len git.
 data/leads.json
+
+# File trung gian do "zmp sync-config" tu tao ra tu public/index.html - can chay lai
+# lenh do moi khi sua index.html truoc khi "zmp deploy", khong nen commit vi de bi cu.
+public/inline.js
