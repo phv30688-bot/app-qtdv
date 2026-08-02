@@ -10,7 +10,7 @@
     "analyze:images": "node scripts/analyze-image-bounds.js",
     "start": "node server.js",
     "dev": "node --env-file=.env server.js",
-    "fix:inline": "node scripts/fix-inline-js.js"
+    "build:zalo": "node scripts/build-zalo-bundle.js"
   },
   "keywords": [],
   "author": "",
