@@ -674,7 +674,11 @@
   goTo('home', {replace:true});
 })();
 
-if ('serviceWorker' in navigator) {
+// Chi dang ky Service Worker khi chay tren domain that cua app (localhost hoac Render) -
+// khi nhung trong Zalo Mini App, giao dien chay tren domain cua Zalo nen /sw.js se 404,
+// khong co ich gi va chi tao request/loi thua.
+var IS_OWN_DOMAIN = (location.hostname === 'localhost' || location.hostname.endsWith('.onrender.com'));
+if (IS_OWN_DOMAIN && 'serviceWorker' in navigator) {
   window.addEventListener('load', function(){
     navigator.serviceWorker.register('/sw.js').catch(function(err){ console.error('SW loi:', err); });
   });

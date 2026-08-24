@@ -6,6 +6,9 @@ const fs = require("fs");
 const express = require("express");
 const cors = require("cors");
 
+const db = require("./lib/db");
+const zaloOa = require("./lib/zalo-oa");
+
 const app = express();
 // Cho phep goi API tu domain khac (can thiet khi nhung vao Zalo Mini App -
 // giao dien chay tren domain cua Zalo nhung van goi ve API tren Render nay).
@@ -17,23 +20,12 @@ const PRODUCTS = JSON.parse(
   fs.readFileSync(path.join(__dirname, "data", "products.enriched.json"), "utf8")
 );
 
-const LEADS_FILE = path.join(__dirname, "data", "leads.json");
+// Lead khach si duoc luu vao Postgres that (Supabase...) neu co DATABASE_URL,
+// khong thi tu dong fallback ve data/leads.json (chi dung khi chay local, xem lib/db.js).
+const { loadLeads, saveLead } = db;
 
-function loadLeads() {
-  if (!fs.existsSync(LEADS_FILE)) return [];
-  return JSON.parse(fs.readFileSync(LEADS_FILE, "utf8"));
-}
-
-function saveLeads(leads) {
-  fs.mkdirSync(path.dirname(LEADS_FILE), { recursive: true });
-  fs.writeFileSync(LEADS_FILE, JSON.stringify(leads, null, 2), "utf8");
-}
-
-// TODO (Zalo OA): khi co Zalo Official Account API credentials, goi API gui tin nhan
-// cho nhan vien sale ngay tai day. Hien tai chi log ra console de biet co lead moi.
-function notifyNewLead(lead) {
-  console.log(`[LEAD MOI] ${lead.name} - ${lead.zalo} - dip: ${lead.occasion || "(chua chon)"} - SL: ${lead.quantity || "(chua ghi)"}`);
-}
+// Gui thong bao lead moi qua Zalo OA that (neu da cau hinh du - xem lib/zalo-oa.js va README).
+const notifyNewLead = zaloOa.notifyNewLead;
 
 const TIER_ORDER = ["1-3", "3-5", "5-10", "10-20", "gt20"];
 
@@ -120,7 +112,7 @@ app.post("/match", (req, res) => {
   res.json({ items, relaxed });
 });
 
-app.post("/wholesale-lead", (req, res) => {
+app.post("/wholesale-lead", async (req, res) => {
   const body = req.body || {};
   const name = (body.name || "").trim();
   const zalo = (body.zalo || "").trim();
@@ -140,17 +132,22 @@ app.post("/wholesale-lead", (req, res) => {
     status: "new"
   };
 
-  const leads = loadLeads();
-  leads.push(lead);
-  saveLeads(leads);
-  notifyNewLead(lead);
+  try {
+    await saveLead(lead);
+  } catch (err) {
+    console.error("[wholesale-lead] Loi luu lead vao DB:", err.message);
+    return res.status(500).json({ error: "Khong luu duoc lead, vui long thu lai." });
+  }
+
+  // Khong cho request cho ket qua gui Zalo - tra loi khach ngay, gui thong bao ngam.
+  notifyNewLead(lead).catch((err) => console.error("[wholesale-lead] notifyNewLead loi:", err.message));
 
   res.status(201).json({ ok: true, id: lead.id });
 });
 
 // Xem danh sach lead da thu thap - dung ?key=... trung voi ADMIN_KEY trong .env.
 // Chua co gi bao ve khac ngoai key nay, nen KHONG chia se link nay cong khai.
-app.get("/admin/leads", (req, res) => {
+app.get("/admin/leads", async (req, res) => {
   const adminKey = process.env.ADMIN_KEY;
   if (!adminKey) {
     return res.status(500).send("Chua cau hinh ADMIN_KEY trong file .env - xem README.");
@@ -159,7 +156,13 @@ app.get("/admin/leads", (req, res) => {
     return res.status(403).send("Sai key.");
   }
 
-  const leads = loadLeads().slice().reverse();
+  let leads;
+  try {
+    leads = (await loadLeads()).slice().reverse();
+  } catch (err) {
+    console.error("[admin/leads] Loi doc leads tu DB:", err.message);
+    return res.status(500).send("Khong doc duoc danh sach lead - kiem tra DATABASE_URL.");
+  }
   const rows = leads
     .map(
       (l) => `<tr>
@@ -183,6 +186,7 @@ app.get("/admin/leads", (req, res) => {
 </style></head>
 <body>
   <h2>Danh sach lead khach si (${leads.length})</h2>
+  <p style="font-size:12px;color:#7A6B4E;">Nguon luu tru: ${db.usingDb() ? "Postgres (DATABASE_URL)" : "File data/leads.json (chua co DATABASE_URL - se mat khi Render build lai)"}</p>
   <table>
     <tr><th>Thoi gian</th><th>Ho ten</th><th>Zalo/SDT</th><th>Dip</th><th>So luong</th><th>Ghi chu</th></tr>
     ${rows || '<tr><td colspan="6">Chua co lead nao.</td></tr>'}
@@ -190,7 +194,50 @@ app.get("/admin/leads", (req, res) => {
 </body></html>`);
 });
 
+// ---------- Thiet lap Zalo OA (chi can lam MOT LAN, xem README muc "Noi Zalo OA that") ----------
+
+app.get("/admin/zalo-oauth", (req, res) => {
+  const adminKey = process.env.ADMIN_KEY;
+  if (!adminKey || req.query.key !== adminKey) {
+    return res.status(403).send("Sai key hoac chua cau hinh ADMIN_KEY.");
+  }
+  if (!zaloOa.isConfigured()) {
+    return res.status(500).send("Chua cau hinh ZALO_APP_ID / ZALO_APP_SECRET tren server - xem README.");
+  }
+  const redirectUri = `${req.protocol}://${req.get("host")}/admin/zalo-oauth/callback`;
+  const url = zaloOa.buildAuthorizeUrl(redirectUri, adminKey);
+  res.redirect(url);
+});
+
+app.get("/admin/zalo-oauth/callback", async (req, res) => {
+  const adminKey = process.env.ADMIN_KEY;
+  if (!adminKey || req.query.state !== adminKey) {
+    return res.status(403).send("Sai state hoac chua cau hinh ADMIN_KEY.");
+  }
+  const { code } = req.query;
+  if (!code) return res.status(400).send("Thieu code tra ve tu Zalo.");
+
+  const redirectUri = `${req.protocol}://${req.get("host")}/admin/zalo-oauth/callback`;
+  try {
+    await zaloOa.exchangeCodeForToken(code, redirectUri);
+    res.send(`<!doctype html><html lang="vi"><body style="font-family:sans-serif;padding:24px;">
+      <h2>Da ket noi Zalo OA thanh cong!</h2>
+      <p>Access token va refresh token da duoc luu vao database. Tu gio notifyNewLead se gui tin nhan that
+      cho nguoi dung trong ZALO_NOTIFY_USER_ID moi khi co lead moi.</p>
+      <p>Ban co the dong tab nay.</p>
+      </body></html>`);
+  } catch (err) {
+    console.error("[zalo-oauth/callback] Loi:", err.message);
+    res.status(500).send("Loi khi doi code lay token: " + err.message);
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server dang chay tai http://localhost:${PORT}`);
+  if (db.usingDb()) {
+    db.initDb().catch((err) => console.error("[db] Loi khoi tao bang:", err.message));
+  } else {
+    console.log("[db] Chua co DATABASE_URL - dang dung file data/leads.json (khong ben vung tren Render free).");
+  }
 });

@@ -29,15 +29,65 @@ Kết quả cuối ghi vào `data/products.enriched.json` — đây là file ser
 
 - `server.js` — API `/match` (gợi ý sản phẩm) và `/wholesale-lead` (lưu lead khách sỉ), phục vụ `public/index.html`.
 - `public/index.html` — giao diện app (tĩnh, gọi API ở trên).
+- `lib/db.js` — lớp lưu trữ: dùng Postgres thật nếu có `DATABASE_URL`, không thì tự fallback về file `data/leads.json`.
+- `lib/zalo-oa.js` — gọi Zalo OA API thật để báo lead mới qua tin nhắn Zalo (xem mục riêng bên dưới).
 - `scripts/` — các script đồng bộ dữ liệu từ Haravan (chỉ chạy ở máy local, không chạy trên server thật).
 - `data/products.enriched.json` — dữ liệu sản phẩm đã xử lý, server dùng trực tiếp.
-- `data/leads.json` — lead khách sỉ thu thập được (không đưa lên git).
+- `data/leads.json` — chỉ dùng khi **chưa** cấu hình `DATABASE_URL` (không đưa lên git).
 
 ## Xem danh sách lead khách sỉ
 
-Vào `http://localhost:3000/admin/leads?key=...` (thay `...` bằng giá trị `ADMIN_KEY` trong file `.env`). Đường link này **không có bảo vệ nào khác ngoài key** — tuyệt đối không chia sẻ công khai.
+Vào `http://localhost:3000/admin/leads?key=...` (thay `...` bằng giá trị `ADMIN_KEY` trong file `.env`). Đường link này **không có bảo vệ nào khác ngoài key** — tuyệt đối không chia sẻ công khai. Trang này hiện rõ đang lấy dữ liệu từ Postgres hay từ file tạm, để bạn biết có cần cấu hình `DATABASE_URL` không.
 
-Hiện tại lead mới chỉ được lưu vào `data/leads.json` và log ra console (`notifyNewLead` trong `server.js`) — chưa nối Zalo OA thật. Khi có tài khoản Zalo OA + API credentials, sửa hàm `notifyNewLead` trong `server.js` để gọi API Zalo, gửi thông báo tức thời cho sale.
+## Lưu lead vào database thật (Supabase)
+
+Gói Render free reset ổ đĩa mỗi lần build lại, nên `data/leads.json` **không đáng tin cậy lâu dài**. Cách khắc phục — dùng Postgres miễn phí của Supabase:
+
+1. Tạo tài khoản tại [supabase.com](https://supabase.com) (đăng nhập bằng GitHub cho nhanh) → **New project** → đặt tên, chọn mật khẩu database, chọn region gần Việt Nam (Singapore).
+2. Đợi project khởi tạo xong (~2 phút) → vào **Project Settings → Database → Connection string** → chọn tab **URI**, copy chuỗi dạng:
+   `postgresql://postgres:[YOUR-PASSWORD]@db.xxxxxxxxxxxx.supabase.co:5432/postgres`
+   Thay `[YOUR-PASSWORD]` bằng mật khẩu bạn đặt ở bước 1.
+3. Dán chuỗi đó vào biến `DATABASE_URL` — trong file `.env` khi chạy local, hoặc trong tab **Environment** của Render khi deploy thật (xem phần Deploy bên dưới).
+4. Không cần tạo bảng thủ công — server tự tạo bảng `leads` và `settings` khi khởi động lần đầu nếu thấy `DATABASE_URL`.
+
+Sau khi có `DATABASE_URL`, mọi lead mới ghi thẳng vào Postgres, không bị mất khi Render build lại nữa. Trang `/admin/leads` sẽ tự chuyển sang đọc từ Postgres.
+
+## Nối Zalo OA thật
+
+Hiện `lib/zalo-oa.js` đã viết sẵn toàn bộ luồng gọi API — chỉ cần bạn cung cấp credentials. Nếu **chưa cấu hình đủ**, `notifyNewLead` tự động bỏ qua và chỉ log ra console như trước, **không làm app lỗi**.
+
+**Điều kiện bắt buộc trước khi làm theo các bước dưới:** đã có `DATABASE_URL` (token Zalo cần được lưu lại và tự làm mới, không thể lưu trong file `.env` trên Render vì không ghi lại được lúc runtime).
+
+**Các bước:**
+
+1. Vào [developers.zalo.me](https://developers.zalo.me) → đăng nhập bằng tài khoản Zalo đang quản lý OA của bạn → **Tạo ứng dụng mới** (chọn loại phù hợp, ví dụ "Official Account").
+2. Trong trang quản lý app vừa tạo, vào mục **Liên kết OA**, chọn đúng Official Account "Quà Tặng Dát Vàng" của bạn.
+3. Lấy `App ID` và `Secret Key` (mục **Cài đặt/Settings** của app) → điền vào biến `ZALO_APP_ID` và `ZALO_APP_SECRET` trên Render (tab Environment).
+4. Trong cài đặt app, thêm **Redirect URL** (OAuth callback):
+   `https://<domain-render-cua-ban>.onrender.com/admin/zalo-oauth/callback`
+5. Redeploy service trên Render để nhận biến môi trường mới, sau đó mở trình duyệt vào:
+   `https://<domain-render-cua-ban>.onrender.com/admin/zalo-oauth?key=<ADMIN_KEY>`
+   Trang sẽ chuyển tới Zalo để bạn đăng nhập và cấp quyền cho app — làm **một lần duy nhất**. Sau khi xong, access token + refresh token được lưu vào Postgres và tự động làm mới mỗi khi hết hạn.
+6. Lấy `user_id` Zalo của người sẽ nhận thông báo (thường là bạn hoặc sale): người đó cần **nhắn tin cho OA ít nhất 1 lần** trước (đây là yêu cầu bắt buộc của Zalo để OA được phép chủ động nhắn lại). Sau đó vào [trang quản trị OA](https://oa.zalo.me) → mục **Quản lý người quan tâm/Tin nhắn** → tìm cuộc hội thoại đó để lấy `user_id` (Zalo hiển thị trong chi tiết người dùng, hoặc lấy qua webhook nếu bạn có cấu hình).
+7. Điền `user_id` đó vào biến `ZALO_NOTIFY_USER_ID` trên Render → redeploy.
+
+Từ lúc này, mỗi lead mới từ form "Đặt số lượng lớn" sẽ tự động gửi một tin nhắn Zalo tới người trong `ZALO_NOTIFY_USER_ID`, kèm log ra console như cũ để dự phòng.
+
+**Lưu ý:** dòng chữ ở cuối app "chưa nối Zalo OA thật" trong `public/index.html` nói về nút "Đặt qua Zalo" (mở cuộc trò chuyện Zalo cho khách) — nút đó đã trỏ tới `zalo.me/0904866869` thật rồi, câu chữ đó chỉ cần cập nhật/xoá khi bạn thấy phù hợp.
+
+## Zalo Mini App
+
+App này được nhúng vào Zalo Mini App bằng cách đóng gói `public/index.html` thành `public/inline.js` (chạy `npm run build:zalo` mỗi khi sửa `index.html`), cùng với `app-config.json` ở thư mục gốc — đây là 2 file mà **Zalo Mini App Studio** (extension trong VS Code) hoặc `zmp` CLI đọc để đóng gói và deploy lên hạ tầng của Zalo. Luồng này **tách biệt hoàn toàn** với việc deploy backend lên Render — Render chỉ phục vụ API (`/match`, `/wholesale-lead`) và bản PWA độc lập, còn Mini App chạy trên domain của Zalo và gọi API qua `API_BASE` trỏ thẳng về Render (đã cấu hình sẵn trong code).
+
+Vì bước deploy/nộp duyệt Mini App bắt buộc phải đăng nhập tài khoản Zalo Developer của bạn (không thể thực hiện thay từ đây), tôi đã kiểm tra kỹ phần code có thể kiểm tra được và **không thấy lỗi** — cụ thể đã xác nhận: `npm run build:zalo` chạy sạch, `public/inline.js` sinh ra hợp lệ về cú pháp, `API_BASE` tự động trỏ đúng về Render khi chạy trên domain Zalo, và đã sửa một chỗ nhỏ (service worker không còn cố đăng ký khi chạy trong Mini App, tránh lỗi 404 vô ích trong console).
+
+**Việc còn lại chỉ bạn làm được (cần đăng nhập Zalo):**
+
+1. Mở project này bằng **Zalo Mini App Studio** (extension VS Code) hoặc `zmp` CLI, đăng nhập tài khoản Zalo Developer.
+2. Chạy `npm run build:zalo` để chắc chắn `public/inline.js` là bản mới nhất trước khi sync/deploy.
+3. Dùng chức năng **Preview/Test** của Zalo Mini App Studio để thử trực tiếp trong app Zalo trên điện thoại (quét QR).
+4. Khi ưng ý, dùng chức năng **Deploy** trong Studio để đẩy bản build lên môi trường thử nghiệm/production của Zalo.
+5. Nếu muốn công khai cho mọi người dùng (không chỉ tester): vào trang quản trị Mini App trên [Zalo Developers](https://developers.zalo.me), điền đầy đủ thông tin nộp duyệt — mô tả, danh mục, icon (đã có sẵn trong `public/icons/`), và **link chính sách bảo mật + điều khoản sử dụng** (bắt buộc — có thể dùng lại chính sách của quatangdatvang.com nếu đã có, hoặc cần soạn mới).
 
 ## Deploy lên Render (miễn phí)
 
@@ -63,6 +113,8 @@ Render sẽ tự build & chạy lại mỗi khi bạn push code mới lên GitHu
    - `HARAVAN_PRIVATE_TOKEN` = (giá trị thật trong file `.env` của bạn)
    - `HARAVAN_API_BASE` = `https://apis.haravan.com/com`
    - `ADMIN_KEY` = (giá trị thật trong file `.env` của bạn)
+   - `DATABASE_URL` = (connection string Supabase — xem mục "Lưu lead vào database thật" bên dưới; có thể thêm sau, không bắt buộc để chạy được)
+   - `ZALO_APP_ID`, `ZALO_APP_SECRET`, `ZALO_NOTIFY_USER_ID` = (xem mục "Nối Zalo OA thật" bên dưới; cũng có thể thêm sau)
 6. Bấm **Create Web Service**. Render build xong sẽ cho một URL công khai dạng `https://qua-tang-app-xxxx.onrender.com` — đây là link bạn có thể chia sẻ cho khách dùng thử ngay.
 
 **Lưu ý về gói miễn phí:**
