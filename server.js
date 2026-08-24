@@ -3,6 +3,7 @@
 
 const path = require("path");
 const fs = require("fs");
+const crypto = require("crypto");
 const express = require("express");
 const cors = require("cors");
 
@@ -230,6 +231,55 @@ app.get("/admin/zalo-oauth/callback", async (req, res) => {
     console.error("[zalo-oauth/callback] Loi:", err.message);
     res.status(500).send("Loi khi doi code lay token: " + err.message);
   }
+});
+
+// ---------- Webhook Zalo Mini App: su kien "user rut lai su dong y va xoa du lieu" ----------
+// Xem tai lieu: https://docs.zaloplatforms.com/docs/MA/openApis/open/webhook/eventRevokeAndRemoveUserData
+// Zalo goi POST toi day khi mot nguoi dung rut lai su dong y su dung Mini App / yeu cau xoa du lieu.
+// API Key lay tu trang "Quan ly Zalo App" > chon Mini App > muc Open APIs (KHONG phai App Secret
+// dung cho dang nhap OAuth) - dat vao bien moi truong ZALO_WEBHOOK_API_KEY tren Render.
+
+function verifyZaloWebhookSignature(body, signatureHeader) {
+  const apiKey = process.env.ZALO_WEBHOOK_API_KEY;
+  if (!apiKey || !signatureHeader) return false;
+
+  // Theo huong dan cua Zalo: lay tat ca field trong body, sap theo thu tu alphabet
+  // cua ten field, noi gia tri lai voi nhau (khong dau phan cach), roi sha256(content + apiKey).
+  const keys = Object.keys(body).sort();
+  let content = "";
+  for (const k of keys) {
+    let value = body[k];
+    if (typeof value === "object" && value !== null) value = JSON.stringify(value);
+    content += value;
+  }
+  const expected = crypto.createHash("sha256").update(content + apiKey).digest("hex");
+
+  try {
+    return crypto.timingSafeEqual(Buffer.from(expected, "hex"), Buffer.from(signatureHeader, "hex"));
+  } catch (err) {
+    return false; // do dai khac nhau (vd header khong phai hex hop le) -> coi nhu khong khop
+  }
+}
+
+app.post("/zalo-webhook", (req, res) => {
+  const body = req.body || {};
+  const signature = req.get("x-zevent-signature");
+
+  if (!verifyZaloWebhookSignature(body, signature)) {
+    console.warn("[zalo-webhook] Chu ky khong hop le hoac thieu ZALO_WEBHOOK_API_KEY, tu choi request.");
+    return res.status(401).json({ error: "invalid signature" });
+  }
+
+  console.log("[zalo-webhook] Nhan su kien tu Zalo:", body);
+
+  if (body.event === "user.revoke.consent") {
+    // App nay khong luu du lieu ca nhan gan voi Zalo userId (form "dat so luong lon" chi luu
+    // ten/so Zalo khach tu go, khong lien ket voi userId cua Zalo Mini App) - nen khong co
+    // du lieu can xoa tuong ung. Ghi log lai (o tren) de doi chieu thu cong neu can thiet.
+  }
+
+  // Phan hoi 200 de Zalo xac nhan da nhan duoc su kien thanh cong.
+  res.status(200).json({ ok: true });
 });
 
 const PORT = process.env.PORT || 3000;
